@@ -5,5 +5,8 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Foursquare_V2_Java_Adapter"/>
+	<classpathentry kind="lib" path="war/WEB-INF/customlib/jackson-core-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/customlib/jackson-mapper-asl-1.8.5.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
