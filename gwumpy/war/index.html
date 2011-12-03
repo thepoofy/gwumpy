@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/stylesheets/jquery.mobile-1.0.min.css" />
+  <link rel="stylesheet" href="assets/stylesheets/jq-mobile-green-button-theme.css" />
+  <link rel="stylesheet" href="assets/stylesheets/main.css" />
+  <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
+  <script type="text/javascript" src="assets/javascripts/jquery.mobile-1.0.min.js"></script>
+  <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
+  <script>
+    $('#splash').live('pagecreate', function(event) {
+      $('#btnInit').click( function(event) {
+        $.mobile.changePage('#homepage', {                                                                                               
+          transition: 'flip'                                                                                                      
+        });          
+      });
+    });
+
+    $('#homepage').live('pageinit', function(event) {
+      initiate_geolocation();
+      $('#search').click( function(event) {
+        $.mobile.changePage('results.html', {                                                                                               
+          transition: 'slide'                                                                                                      
+        });          
+      });
+    });
+
+    function initiate_geolocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handle_geolocation_query, handle_errors);
+      } else {
+        yqlgeo.get('visitor', normalize_yql_response);
+      }
+    }
+
+    function handle_errors(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          $.mobile.changePage("#onError", {
+            transition: 'pop', role: 'dialog'
+          });
+        break;
+        case error.POSITION_UNAVAILABLE:
+          $.mobile.changePage("#onError", {
+            transition: 'flip', role: 'dialog'
+          });
+        break;
+        case error.TIMEOUT:
+          $.mobile.changePage("#onError", {
+            transition: 'flip', role: 'dialog'
+          });
+        break;
+        default:
+          $.mobile.changePage("#onError", {
+            transition: 'flip', role: 'dialog'
+          });
+        break;
+      }
+    }
+
+    function normalize_yql_response(response) {
+      if (response.error) {
+        var error = { code : 0 };
+        handle_error(error);
+        return;
+      }
+
+      var position = {
+        coords : {
+          latitude: response.place.centroid.latitude,
+          longitude: response.place.centroid.longitude
+        },
+        address : {
+          city: response.place.locality2.content,
+          region: response.place.admin1.content,
+          country: response.place.country.content
+        }
+      };
+
+      handle_geolocation_query(position);
+    }
+
+    function handle_geolocation_query(position) {
+/*
+      $.mobile.changePage('success.html', {
+        transition: 'flip',
+        role: 'dialog',
+        data: position.coords.latitude,
+        type: 'get'
+      });
+*/
+      $.mobile.loadPage('#onSuccess');
+      $('#onSuccess #latitude').val(position.coords.latitude);                                                                                     
+      $('#onSuccess #longitude').val(position.coords.longitude);
+      $('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
+      $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val()); 
+    }
+
+    </script>
+  </head>
+  <body>
+    <div id="splash" data-role="page">
+      <div data-role="header">
+        <h1>Gwumpy</h1>
+      </div>
+      <div data-role="content">
+        <h1>Make a Splash</h1>
+        <button id="btnInit" data-theme="g">I'm hungry!</button>
+      </div>
+    </div>
+    <div id="homepage" data-role="page">
+      <div data-role="header">
+        <a href="#splash" data-rel="back" data-theme="a">Back</a>
+        <h1>Gwumpy</h1>
+      </div>
+      <div data-role="content">
+        <form name="search_form" id="search_form" type="post" action="/gwumpy/search">
+          <label for="category" class="select">I'm Craving:</label>
+          <select id="craving" data-theme="d" name="category">
+            <option value="restaurants">ANYTHING!</option>
+            <option value="american">American</option>
+            <option value="french">French</option>
+            <option value="italian">Italian</option>
+            <option value="japanese">Japanese</option>
+            <option value="mexican">Mexican</option>
+            <option value="pizza">Pizza</option>
+            <option value="thai">Thai</option>
+          </select>
+          <label for="price" class="select">I'm Willing to Spend:</label>
+          <select data-theme="d" name="price">
+            <option value="4">As much as I need to</option>
+            <option value="3">A decent amount</option>
+            <option value="2">A little bit</option>
+            <option value="1">What I Found in My Pocket</option>
+          </select>
+          <label for="standard" class="select">My Standards Are:</label>
+          <select data-theme="d" name="standard">
+            <option value="3">Champagne Taste</option>
+            <option value="2">Some dirt is ok</option>
+            <option value="1">I'll take my chances</option>
+          </select>
+          <input id="latitude" type="hidden" name="lat" value="" />                                                                    
+          <input id="longitude" type="hidden" name="lng" value="" />
+          <br/>
+          <button id="search" data-theme="g">Feed the Gwump!</button>
+        </form>
+      </div>
+      <div data-role="footer">
+        <h1>&copy; 2011 The Gwumpy Team</h1>
+      </div>
+    </div>
+    <div id="onError" data-role="page">
+      <div data-role="header"><h1>Oops...</h1></div>
+      <div data-role="content">
+        <p>We could not determine your location for some reason. Make sure you give us permission by changing your browser settings or try again later.</p>
+      </div>
+    </div>
+    <div id="onSuccess" data-role="page">
+      <form>
+        <input id="latitude" type="hidden" name="latitude" value="" />
+        <input id="longitude" type="hidden" name="longitude" value="" />
+      </form>
+    </div>
+  </body>
+</html>
