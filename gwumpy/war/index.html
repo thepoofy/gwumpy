@@ -23,9 +23,20 @@
 
     $('#homepage').live('pagecreate', function(event) {
       $('#search').click( function(event) {
+        event.stopPropagation();
+        var form_data = $('form#search_form').serialize();
+        $.ajax({
+         url: "/gwumpy/search",
+         data: form_data,
+         success: function() {
+           alert('success');
+         }
+        });
+/*
         $.mobile.changePage('results.html', {                                                                                               
           transition: 'slide'                                                                                                      
-        });          
+        });        
+*/  
       });
     });
 
@@ -120,7 +131,7 @@
         <h1>Gwumpy</h1>
       </div>
       <div data-role="content">
-        <form name="search_form" id="search_form" type="post" action="/gwumpy/search">
+        <form name="search_form" id="search_form">
           <label for="category" class="select">I'm Craving:</label>
           <select id="craving" data-theme="d" name="category">
             <option value="restaurants">ANYTHING!</option>
