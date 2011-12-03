@@ -23,7 +23,6 @@
 
     $('#homepage').live('pagecreate', function(event) {
       $('#search').click( function(event) {
-alert($('#homepage #search_form #accuracy').val());
         $.mobile.changePage('results.html', {                                                                                               
           transition: 'slide'                                                                                                      
         });          
@@ -97,7 +96,7 @@ alert($('#homepage #search_form #accuracy').val());
       $.mobile.loadPage('#onSuccess');
       $('#onSuccess #latitude').val(position.coords.latitude);                                                                                     
       $('#onSuccess #longitude').val(position.coords.longitude);
-      $('#onSuccess #accuracy').val(position.accuracy);
+      $('#onSuccess #accuracy').val(position.coords.accuracy);
       $('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
       $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val());
       $('#homepage #search_form #accuracy').val($('#onSuccess #accuracy').val());
