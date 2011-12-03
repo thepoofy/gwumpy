@@ -23,7 +23,7 @@
 
     $('#homepage').live('pagecreate', function(event) {
       $('#search').click( function(event) {
-        event.stopPropagation();
+        event.preventDefault();
         var form_data = $('form#search_form').serialize();
         $.ajax({
          url: "/gwumpy/search",
@@ -32,11 +32,9 @@
            alert('success');
          }
         });
-/*
         $.mobile.changePage('results.html', {                                                                                               
           transition: 'slide'                                                                                                      
-        });        
-*/  
+        });
       });
     });
 
