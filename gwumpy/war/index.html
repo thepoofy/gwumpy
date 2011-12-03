@@ -17,10 +17,13 @@
       });
     });
 
-    $('#homepage').live('pageinit', function(event) {
+    $('#homepage').live('pagebeforecreate', function(event) {
       initiate_geolocation();
+    });
+
+    $('#homepage').live('pagecreate', function(event) {
       $('#search').click( function(event) {
-alert($('#homepage #search_form #latitude').val());
+alert($('#homepage #search_form #accuracy').val());
         $.mobile.changePage('results.html', {                                                                                               
           transition: 'slide'                                                                                                      
         });          
@@ -94,8 +97,10 @@ alert($('#homepage #search_form #latitude').val());
       $.mobile.loadPage('#onSuccess');
       $('#onSuccess #latitude').val(position.coords.latitude);                                                                                     
       $('#onSuccess #longitude').val(position.coords.longitude);
+      $('#onSuccess #accuracy').val(position.accuracy);
       $('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
-      $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val()); 
+      $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val());
+      $('#homepage #search_form #accuracy').val($('#onSuccess #accuracy').val());
     }
 
     </script>
@@ -143,6 +148,7 @@ alert($('#homepage #search_form #latitude').val());
           </select>
           <input id="latitude" type="hidden" name="lat" value="" />                                                                    
           <input id="longitude" type="hidden" name="lng" value="" />
+          <input id="accuracy" type="hidden" name="llAcc" value="" />
           <br/>
           <button id="search" data-theme="g">Feed the Gwump!</button>
         </form>
@@ -159,8 +165,9 @@ alert($('#homepage #search_form #latitude').val());
     </div>
     <div id="onSuccess" data-role="page">
       <form>
-        <input id="latitude" type="hidden" name="lat" value="" />
-        <input id="longitude" type="hidden" name="lng" value="" />
+        <input id="latitude" type="hidden" name="latitude" value="" />
+        <input id="longitude" type="hidden" name="longitude" value="" />
+        <input id="accuracy" type="hidden" name="llAcc" value="" />
       </form>
     </div>
   </body>
