@@ -17,10 +17,12 @@
       });
     });
 
-    $('#homepage').live('pageinit', function(event) {
+    $('#homepage').live('pagebeforecreate', function(event) {
       initiate_geolocation();
+    });
+
+    $('#homepage').live('pagecreate', function(event) {
       $('#search').click( function(event) {
-alert($('#homepage #search_form #latitude').val());
         $.mobile.changePage('results.html', {                                                                                               
           transition: 'slide'                                                                                                      
         });          
@@ -159,8 +161,8 @@ alert($('#homepage #search_form #latitude').val());
     </div>
     <div id="onSuccess" data-role="page">
       <form>
-        <input id="latitude" type="hidden" name="lat" value="" />
-        <input id="longitude" type="hidden" name="lng" value="" />
+        <input id="latitude" type="hidden" name="latitude" value="" />
+        <input id="longitude" type="hidden" name="longitude" value="" />
       </form>
     </div>
   </body>
