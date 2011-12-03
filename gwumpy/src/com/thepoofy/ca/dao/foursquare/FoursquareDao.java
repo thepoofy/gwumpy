@@ -33,10 +33,10 @@ public class FoursquareDao
 			throw new IllegalArgumentException("EndPoint must be specified.");
 		}
 		
-		if(accessToken == null)
-		{
-			throw new IllegalArgumentException("AccessToken cannot be null.");
-		}
+//		if(accessToken == null)
+//		{
+//			throw new IllegalArgumentException("AccessToken cannot be null.");
+//		}
 		
 		this.accessToken = accessToken;
 		this.endpointBase = endPoint;

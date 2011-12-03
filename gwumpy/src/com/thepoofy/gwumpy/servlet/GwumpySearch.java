@@ -5,6 +5,7 @@ package com.thepoofy.gwumpy.servlet;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
 import com.thepoofy.constants.VenueCategoryEnum;
+import com.thepoofy.gwumpy.model.VenueSummary;
 import com.thepoofy.util.Location;
 import com.williamvanderhoef.foursquare.adapters.JsonSyntaxException;
 import com.williamvanderhoef.foursquare.parsers.JsonUtil;
@@ -35,6 +37,7 @@ public class GwumpySearch extends HttpServlet
 			
 			Double lat = Double.parseDouble(request.getParameter("lat"));
 			Double lng = Double.parseDouble(request.getParameter("lng"));
+			Integer llAcc = Integer.parseInt(request.getParameter("llAcc"));
 			String dist = request.getParameter("distance");
 			String cat = request.getParameter("category");
 			String price = request.getParameter("price");
@@ -42,6 +45,7 @@ public class GwumpySearch extends HttpServlet
 			Location loc = new Location();
 			loc.setLatitude(lat);
 			loc.setLongitude(lng);
+			loc.setAccuracy(llAcc);
 			
 			Integer radius = 800;
 			if("3".equals(dist))
@@ -53,11 +57,14 @@ public class GwumpySearch extends HttpServlet
 				radius = 400;
 			}
 			
-			VenueCategoryEnum category = VenueCategoryEnum.valueOf(cat);
+			//guarantees a category
+			VenueCategoryEnum category = VenueCategoryEnum.find(cat);
 			
 			VenueSearchResponse vsr = dao.browse(loc, radius, category.getFsqId());
 			
-			doResponse(vsr, response);
+			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
+			
+			doResponse(venues, response);
 		}
 		catch(Throwable t)
 		{
