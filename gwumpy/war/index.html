@@ -31,7 +31,7 @@
          dataType: 'json',
          success: function(data) {
            alert(data);
-           $.mobile.changePage('#results', {                                                                                               
+           $.mobile.loadPage('#results', {                                                                                               
              transition: 'slide'
            });
            $('#results').live('pagebeforecreate', function(event) {
@@ -42,6 +42,9 @@ alert(resp.name);
                var div_data = "<div>"+resp.name+"</div>";
                $(div_data).appendTo("#results_list");
              });
+           });
+           $.mobile.changePage('#results', {                                                                                               
+             transition: 'slide'
            });
          }
         });
