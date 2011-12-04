@@ -8,8 +8,8 @@ import org.apache.http.auth.InvalidCredentialsException;
 
 import com.thepoofy.constants.Constants;
 import com.thepoofy.util.Location;
-import com.williamvanderhoef.foursquare.model.VenueDetails;
 import com.williamvanderhoef.foursquare.model.subtypes.Results;
+import com.williamvanderhoef.foursquare.responses.VenueLinksResponse;
 import com.williamvanderhoef.foursquare.responses.VenueResponse;
 import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 
@@ -41,16 +41,22 @@ public class VenuesDao
 	 * @throws HttpConnectionException
 	 * @throws InvalidCredentialsException
 	 */
-	public VenueDetails getDetails(Integer venueId) throws IOException, InvalidCredentialsException, Exception
+	public VenueResponse getDetails(String venueId) throws IOException, InvalidCredentialsException, Exception
 	{
+		Map<String, String>params = new HashMap<String,String>();
+		
+		if(venueId == null)
+		{
+			throw new Exception("Venue ID is required for Venue Details");
+		}
+		
 		if(!Constants.MOCK_DATA)
 		{
-			return dao.execute(venueId.toString(), null, new Results<VenueResponse>(){}).getVenue();
+			return dao.execute(venueId,null,params, new Results<VenueResponse>(){});
 		}
 		else
 		{
-			//TODO update this if we start using this endpoint
-			return null;
+			return new VenueResponse();
 		}
 	}
 	
@@ -123,4 +129,33 @@ public class VenuesDao
 	}
 	
 	
+	/**
+	 * Search Venues
+	 * http://developer.foursquare.com/docs/venues/links.html
+	 * 
+	 * 
+	 * @throws InvalidCredentialsException 
+	 * @throws HttpConnectionException 
+	 * @throws IOException 
+	 * @throws Exception
+	 */
+	public VenueLinksResponse links(String venueId) throws IOException, InvalidCredentialsException, Exception
+	{
+		Map<String, String>params = new HashMap<String,String>();
+		
+		
+		if(venueId == null)
+		{
+			throw new Exception("Venue ID is required for Venue Links");
+		}
+		
+		if(!Constants.MOCK_DATA)
+		{
+			return dao.execute(venueId,"links",params, new Results<VenueLinksResponse>(){});
+		}
+		else
+		{
+			return new VenueLinksResponse();
+		}
+	}
 }

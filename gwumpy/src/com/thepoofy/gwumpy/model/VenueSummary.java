@@ -38,14 +38,17 @@ public class VenueSummary
 	//health code rating
 	private String healthCodeRating;
 	
-	private static VenueSummary valueOf(Venue v)
+	public static VenueSummary valueOf(Venue v)
 	{
 		VenueSummary vs = new VenueSummary();
 		
 		vs.setName(v.getName());
 		
-		vs.setAddress(v.getLocation().getAddress());
-		vs.setDistance(v.getLocation().getDistance());
+		if(v.getLocation() != null)
+		{
+			vs.setAddress(v.getLocation().getAddress());
+			vs.setDistance(v.getLocation().getDistance());
+		}
 		
 		Category cat = v.getCategories().get(0);
 		ImageDefinition imgDef = cat.getIcon();
@@ -57,6 +60,8 @@ public class VenueSummary
 		
 		return vs;
 	}
+	
+	
 	
 	/**
 	 * @return the name

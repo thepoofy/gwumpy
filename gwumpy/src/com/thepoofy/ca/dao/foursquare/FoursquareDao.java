@@ -1,11 +1,11 @@
 package com.thepoofy.ca.dao.foursquare;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.http.auth.InvalidCredentialsException;
 
 import com.thepoofy.constants.Constants;
 import com.thepoofy.util.KeyValuePair;
@@ -74,7 +74,7 @@ public class FoursquareDao
 			throw new IllegalArgumentException("Parameters to execute cannot be null.");
 		}
 		
-		List<KeyValuePair> params = convertToKeyValuePair(parameters);
+		List<KeyValuePair> params = URLUtil.convertToKeyValuePair(parameters);
 		addAuthentication(params);
 		addLastTestedVersion(params);
 		StringBuilder pathBuilder = new StringBuilder(Constants.FOURSQUARE_API_URL);
@@ -134,23 +134,6 @@ public class FoursquareDao
 	}
 	
 	
-	/**
-	 * 
-	 * @param parameters
-	 * @return
-	 */
-	private List<KeyValuePair> convertToKeyValuePair(Map<String, String>parameters)
-	{
-		List<KeyValuePair> pairsList = new ArrayList<KeyValuePair>();
-		
-		Set<String>keys = parameters.keySet();
-		for(String key: keys)
-		{
-			pairsList.add(new KeyValuePair(key, parameters.get(key)));
-		}
-		
-		return pairsList;
-	}
 	
 	
 	/**

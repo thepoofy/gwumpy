@@ -5,7 +5,6 @@ package com.thepoofy.gwumpy.servlet;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -14,61 +13,61 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
-import com.thepoofy.constants.VenueCategoryEnum;
 import com.thepoofy.gwumpy.model.VenueSummary;
-import com.thepoofy.util.Location;
+import com.thepoofy.gwumpy.nyc.NycInspectionApi;
 import com.williamvanderhoef.foursquare.adapters.JsonSyntaxException;
+import com.williamvanderhoef.foursquare.model.VenueDetails;
+import com.williamvanderhoef.foursquare.model.VenueExternalLink;
 import com.williamvanderhoef.foursquare.parsers.JsonUtil;
 import com.williamvanderhoef.foursquare.parsers.ResultsParser;
-import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
+import com.williamvanderhoef.foursquare.responses.VenueLinksResponse;
+import com.williamvanderhoef.foursquare.responses.VenueResponse;
 
 /**
  * @author Willum
  *
  */
 @SuppressWarnings("serial")
-public class GwumpySearch extends HttpServlet
+public class GwumpyDetails extends HttpServlet
 {
 	private void handleResponse(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
 	{
+		System.out.println("ASDF ASDF ASDF ASDF");
+		
 		try
 		{
 			VenuesDao dao = new VenuesDao(null);
 			
-			Double lat = getParameterDouble(request, "lat", true);
-			Double lng = getParameterDouble(request, "lng", true); //Double.parseDouble(request.getParameter("lng"));
-			Integer llAcc = getParameterInteger(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
-//			String dist = request.getParameter("distance");
-			String cat = getParameter(request, "category", false);
-//			String price = request.getParameter("price");
+			String fsqId = getParameter(request, "fsqId", true);
 			
-			Location loc = new Location();
-			loc.setLatitude(lat);
-			loc.setLongitude(lng);
-			if(llAcc == null)
+			VenueResponse venueResponse = dao.getDetails(fsqId);
+			VenueDetails vd = venueResponse.getVenue();
+			
+			VenueLinksResponse linksResponse = dao.links(fsqId);
+			
+			NycInspectionApi nycApi = new NycInspectionApi();
+			String restaurantGrade = nycApi.findGrade(vd);
+			
+			VenueSummary vs = VenueSummary.valueOf(vd);
+			
+			vs.setHealthCodeRating(restaurantGrade);
+			
+			if(linksResponse != null && linksResponse.getVenueLinks() != null)
 			{
-				llAcc = 100;
+				for(VenueExternalLink links : linksResponse.getVenueLinks()){
+				
+					if("nyt".equalsIgnoreCase(links.getProvider().getId()))
+					{
+						vs.setNytimesReview(links.getUrl());
+					}
+				}
 			}
-			loc.setAccuracy(llAcc);
 			
-			Integer radius = 400;
-//			if("3".equals(dist))
-//			{
-//				radius = 1600;
-//			}
-//			else if("1".equals(dist))
-//			{
-//				radius = 400;
-//			}
 			
-			//guarantees a category
-			VenueCategoryEnum category = VenueCategoryEnum.find(cat);
 			
-			VenueSearchResponse vsr = dao.browse(loc, radius, category.getFsqId());
+//			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
 			
-			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
-			
-			doResponse(venues, response);
+			doResponse(vs, response);
 		}
 		catch(Throwable t)
 		{

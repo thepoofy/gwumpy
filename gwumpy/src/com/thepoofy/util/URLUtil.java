@@ -9,7 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -213,4 +216,23 @@ public class URLUtil
 		return null;
 	}
 	
+	
+
+	/**
+	 * 
+	 * @param parameters
+	 * @return
+	 */
+	public static List<KeyValuePair> convertToKeyValuePair(Map<String, String>parameters)
+	{
+		List<KeyValuePair> pairsList = new ArrayList<KeyValuePair>();
+		
+		Set<String>keys = parameters.keySet();
+		for(String key: keys)
+		{
+			pairsList.add(new KeyValuePair(key, parameters.get(key)));
+		}
+		
+		return pairsList;
+	}
 }
