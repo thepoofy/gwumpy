@@ -29,18 +29,23 @@
          url: "/gwumpy/search",
          data: form_data,
          dataType: 'json',
-         success: function(data) {
-           alert(data);
-           $('#results').live('pagebeforecreate', function(event) {
-alert('please work');
-             $.each(data, function(i, resp) {
-alert('yes');
-alert(i);
-alert(resp.name);
-               var div_data = "<div>"+resp.name+"</div>";
-               $(div_data).appendTo("#results_list");
-             });
+         success: function(data) 
+         {
+           //alert(data);
+           
+           $.each(data, function(i, resp) {
+        	 //  alert('yes');
+        	   //alert(i);
+        	 //  alert(resp.name);
+             var div_data = "<div>"+resp.name+"</div>";
+             $(div_data).appendTo("#results_list");
            });
+           
+/*            $('#results').live('pagebeforecreate', function(event) {
+alert('please work');
+             
+           }); */
+           
            $.mobile.changePage('#results', {                                                                                               
              transition: 'slide'
            });
