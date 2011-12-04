@@ -43,6 +43,7 @@ public class NycInspectionApi
 			List<List<Object>> data = (List)results.get("data");
 			if(data != null && !data.isEmpty() && data.get(0).size() > 23)
 			{
+				System.out.println(data.get(0));
 				return (String)data.get(0).get(23);
 			}
 		}
