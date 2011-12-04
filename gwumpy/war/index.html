@@ -36,8 +36,11 @@
            });
            $('#results').live('pagecreate', function(event) {
              $.each(data, function(i,data) {
+alert('yes');
+alert(i);
+alert(data.name);
                var div_data = "<div>"+data.name+"</div>";
-               $(div_data).appendTo("#results");
+               $(div_data).appendTo("#results_list");
              });
            });
          }
@@ -126,7 +129,7 @@
         <h1>Gwumpy</h1>
       </div>
       <div data-role="content">
-        <h1>Make a Splash</h1>
+        <center><img src="assets/stylesheets/images/gwumpylogo.jpg"/></center>
         <button id="btnInit" data-theme="g">I'm hungry!</button>
       </div>
     </div>
@@ -186,7 +189,10 @@
       </form>
     </div>
     <div id="results" data-role="page">
+      <div data-role="header"><h1>Search Results</h1></div>
+      <div id="results_list" data-role="content">
 
+      </div>
     </div>
   </body>
 </html>
