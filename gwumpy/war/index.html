@@ -34,12 +34,12 @@
            $.mobile.changePage('#results', {                                                                                               
              transition: 'slide'
            });
-           $('#results').live('pagecreate', function(event) {
-             $.each(data, function(i,data) {
+           $('#results').live('pagebeforecreate', function(event) {
+             $.each(data, function(i, resp) {
 alert('yes');
 alert(i);
-alert(data.name);
-               var div_data = "<div>"+data.name+"</div>";
+alert(resp.name);
+               var div_data = "<div>"+resp.name+"</div>";
                $(div_data).appendTo("#results_list");
              });
            });
