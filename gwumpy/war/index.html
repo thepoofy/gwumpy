@@ -26,14 +26,19 @@
         event.preventDefault();
         var form_data = $('form#search_form').serialize();
         $.ajax({
-         url: "http://gwumpymobile.appspot.com/gwumpy/search",
+         url: "/gwumpy/search",
          data: form_data,
          dataType: 'json',
          success: function(data) {
            alert(data);
-           $.mobile.changePage('results.html', {                                                                                               
-             transition: 'slide',
-             data: data                                                                                                      
+           $.mobile.changePage('#results', {                                                                                               
+             transition: 'slide'
+           });
+           $('#results').live('pagecreate', function(event) {
+             $.each(data, function(i,data) {
+               var div_data = "<div>"+data.name+"</div>";
+               $(div_data).appendTo("#results");
+             });
            });
          }
         });
@@ -179,6 +184,9 @@
         <input id="longitude" type="hidden" name="longitude" value="" />
         <input id="accuracy" type="hidden" name="llAcc" value="" />
       </form>
+    </div>
+    <div id="results" data-role="page">
+
     </div>
   </body>
 </html>
