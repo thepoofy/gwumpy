@@ -31,10 +31,8 @@
          dataType: 'json',
          success: function(data) {
            alert(data);
-           $.mobile.loadPage('#results', {                                                                                               
-             transition: 'slide'
-           });
            $('#results').live('pagebeforecreate', function(event) {
+alert('please work');
              $.each(data, function(i, resp) {
 alert('yes');
 alert(i);
@@ -122,6 +120,7 @@ alert(resp.name);
       $('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
       $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val());
       $('#homepage #search_form #accuracy').val($('#onSuccess #accuracy').val());
+      $.mobile.loadPage('#results');
     }
 
     </script>
