@@ -26,14 +26,16 @@
         event.preventDefault();
         var form_data = $('form#search_form').serialize();
         $.ajax({
-         url: "/gwumpy/search",
+         url: "http://gwumpymobile.appspot.com/gwumpy/search",
          data: form_data,
-         success: function() {
-           alert('success');
+         dataType: 'json',
+         success: function(data) {
+           alert(data);
+           $.mobile.changePage('results.html', {                                                                                               
+             transition: 'slide',
+             data: data                                                                                                      
+           });
          }
-        });
-        $.mobile.changePage('results.html', {                                                                                               
-          transition: 'slide'                                                                                                      
         });
       });
     });
