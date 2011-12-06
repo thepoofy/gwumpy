@@ -10,7 +10,9 @@ import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 
 public class VenueSummary
 {
-	//name
+	//id
+	private String id;
+		//name
 	private String name;
 	//distance formatted for the user
 	private Double distance;
@@ -42,6 +44,7 @@ public class VenueSummary
 	{
 		VenueSummary vs = new VenueSummary();
 		
+		vs.setId(v.getId());
 		vs.setName(v.getName());
 		
 		if(v.getLocation() != null)
@@ -238,7 +241,22 @@ public class VenueSummary
 	{
 		this.healthCodeRating = healthCodeRating;
 	}
+	/**
+	 * @return the id
+	 */
+	public String getId()
+	{
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id)
+	{
+		this.id = id;
+	}
 
+	
 	public static List<VenueSummary> adaptVenueList(VenueSearchResponse vsr)
 	{
 		List<VenueSummary> venues = new ArrayList<VenueSummary>();

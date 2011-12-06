@@ -38,13 +38,14 @@ public class NycInspectionApi
 		ObjectMapper mapper = new ObjectMapper();
 		try
 		{
+//			System.out.println(response);
 			Map results = mapper.readValue(response, Map.class);
 			
 			List<List<Object>> data = (List)results.get("data");
 			if(data != null && !data.isEmpty() && data.get(0).size() > 23)
 			{
 				System.out.println(data.get(0));
-				return (String)data.get(0).get(23);
+				return ""+data.get(0).get(22);
 			}
 		}
 		catch(JsonMappingException e)

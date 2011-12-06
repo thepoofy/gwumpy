@@ -129,7 +129,7 @@ public class GwumpySearch extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		if(res != null)
+		if(res != null && !res.isEmpty())
 		{
 			return Integer.parseInt(res);
 		}
@@ -143,7 +143,7 @@ public class GwumpySearch extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		if(res != null)
+		if(res != null && !res.isEmpty())
 		{
 			return Double.parseDouble(res);
 		}
