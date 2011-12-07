@@ -35,24 +35,39 @@ public class GwumpyDetails extends ServletBase
 			VenueResponse venueResponse = dao.getDetails(fsqId);
 			VenueDetails vd = venueResponse.getVenue();
 			
-			VenueLinksResponse linksResponse = dao.links(fsqId);
+			VenueSummary vs = VenueSummary.valueOf(vd);
+			
 			
 			NycInspectionApi nycApi = new NycInspectionApi();
 			String restaurantGrade = nycApi.findGrade(vd);
-			
-			VenueSummary vs = VenueSummary.valueOf(vd);
-			
 			vs.setHealthCodeRating(restaurantGrade);
 			
-			if(linksResponse != null && linksResponse.getVenueLinks() != null)
+			
+			VenueLinksResponse linksResponse = dao.links(fsqId);
+			
+			
+			if(linksResponse != null && linksResponse.getLinks() != null)
 			{
-				for(VenueExternalLink links : linksResponse.getVenueLinks()){
-				
+				for(VenueExternalLink links : linksResponse.getLinks())
+				{
 					if("nyt".equalsIgnoreCase(links.getProvider().getId()))
 					{
 						vs.setNytimesReview(links.getUrl());
 					}
+					else if("allmenu".equalsIgnoreCase(links.getProvider().getId()))
+					{
+						vs.setAllMenuUrl(links.getUrl()+"menu/");
+					}
+					else
+					{
+						System.out.println(links.getProvider().getId());
+					}
 				}
+			}
+			else
+			{
+				System.out.println(linksResponse);
+				System.out.println(linksResponse.getLinks().getCount() > 0);
 			}
 			
 			

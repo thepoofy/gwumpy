@@ -101,10 +101,8 @@ public class FoursquareDao
 			response = URLUtil.doPost(pathBuilder.toString(), params);
 		}
 		
-//		Log.i(Constants.TAG, "Executing: "+request.getURI());
-//		Log.i(Constants.TAG, "Params: "+params.toString());
+		
 		return unwrap(response, results);
-	
 	}
 	
 	private void addLastTestedVersion(List<KeyValuePair> params)

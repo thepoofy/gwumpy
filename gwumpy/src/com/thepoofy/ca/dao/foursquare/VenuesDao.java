@@ -130,7 +130,6 @@ public class VenuesDao
 	
 	
 	/**
-	 * Search Venues
 	 * http://developer.foursquare.com/docs/venues/links.html
 	 * 
 	 * 

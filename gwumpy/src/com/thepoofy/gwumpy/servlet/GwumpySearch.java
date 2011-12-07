@@ -60,16 +60,30 @@ public class GwumpySearch extends ServletBase
 		{
 			doError(t, response);
 		}
+		
+		
 	}
 	
-	public void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
 	{
 		handleResponse(request, response);
 	}
-	public void doPost(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
 	{
 		handleResponse(request, response);
 	}
+
+
 	
 	
 }

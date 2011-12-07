@@ -37,6 +37,8 @@ public class VenueSummary
 	//ny times review
 	private String nytimesReview;
 	
+	private String allMenuUrl;
+	
 	//health code rating
 	private String healthCodeRating;
 	
@@ -271,6 +273,26 @@ public class VenueSummary
 		}
 		
 		return venues;
+	}
+
+
+
+	/**
+	 * @return the allMenuUrl
+	 */
+	public String getAllMenuUrl()
+	{
+		return allMenuUrl;
+	}
+
+
+
+	/**
+	 * @param allMenuUrl the allMenuUrl to set
+	 */
+	public void setAllMenuUrl(String allMenuUrl)
+	{
+		this.allMenuUrl = allMenuUrl;
 	}
 	
 }
