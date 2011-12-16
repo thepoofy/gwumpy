@@ -15,8 +15,9 @@ public class Constants
 
 	
 	//Yelp
-	public static final String YELP_API = "";
-	public static final String YELP_KEY = "";
-	
+	public static final String YELP_CONSUMER_KEY = "4m-MGH2qf2NzURdXr2Jx3Q";
+	public static final String YELP_CONSUMER_SECRET = "PAcyfOP856QPxMTkbqbjPPRZiqk";
+	public static final String YELP_TOKEN = "KZUc15HlTrLvfkjgu54KT5XWhl4kDh34";
+	public static final String YELP_TOKEN_SECRET = "tP_ji0IHILAxikszwE5AO8yTrHk";
 	
 }
