@@ -4,15 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -20,7 +21,6 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.appengine.repackaged.com.google.common.util.Base64;
 
 public class URLUtil
 {
@@ -89,7 +89,7 @@ public class URLUtil
         	assert false;
         }
 
-        String header = "Basic " + Base64.encode(bytes);
+        String header = "Basic " + Base64.encodeBase64(bytes);
         connection.setRequestProperty("Authorization", header);
         
         connection.setRequestProperty("User-Agent", "gwumpy");
@@ -111,7 +111,7 @@ public class URLUtil
 			System.out.println("Loading: " + uri);
 			
 			HTTPRequest request = new HTTPRequest(new URL(uri), method);
-			request.setHeader(new HTTPHeader("User-Agent", "williamvanderhoef.com v2.0 beta"));
+			request.setHeader(new HTTPHeader("User-Agent", "gwumpy.com beta"));
 			
 			HTTPResponse res = fetcher.fetch(request);
 			
@@ -131,43 +131,10 @@ public class URLUtil
 		return results;
 	}
 	
-	
-	public static String doPost(String address, List<KeyValuePair>params) {
-		try {
-			// Construct data
-			StringBuilder data = new StringBuilder();
-			for(KeyValuePair param : params)
-			{
-				data.append(URLEncoder.encode(param.key, "UTF-8"))
-				.append("=")
-				.append(URLEncoder.encode(param.value, "UTF-8"))
-				.append("&");
-			}
-			
-				
-			// Send data
-			URL url = new URL(address);
-			URLConnection conn = url.openConnection();
-			conn.setDoOutput(true);
-			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
-			outputStreamWriter.write(data.toString());
-			outputStreamWriter.flush();
-
-			// Get the response
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			StringBuilder sb = new StringBuilder();
-			
-			while(br.ready())
-			{
-				sb.append(br.readLine());
-			}
-			
-			outputStreamWriter.close();
-			br.close();
-			
-			return sb.toString();
-			
+	public static String doPost(String address, List<KeyValuePair>params){
+		try 
+		{	
+			return loadPage(address+"?"+createParamString(params), HTTPMethod.POST);
 		} 
 		catch (Exception e) 
 		{
@@ -175,38 +142,65 @@ public class URLUtil
 		}
 		return null;
 	}
+	
+//	public static String doPost(String address, List<KeyValuePair>params) 
+//	{
+//		try 
+//		{
+//			// Send data
+//			URL url = new URL(address);
+//			URLConnection conn = url.openConnection();
+//			conn.setDoOutput(true);
+//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+//			outputStreamWriter.write(createParamString(params));
+//			outputStreamWriter.flush();
+//
+//			// Get the response
+//			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//			
+//			StringBuilder sb = new StringBuilder();
+//			
+//			while(br.ready())
+//			{
+//				sb.append(br.readLine());
+//			}
+//			
+//			outputStreamWriter.close();
+//			br.close();
+//			
+//			return sb.toString();
+//			
+//		} 
+//		catch (Exception e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 	
 	public static String doGet(String address, List<KeyValuePair>params) {
 		try {
-			// Construct data
-			StringBuilder data = new StringBuilder();
-			for(KeyValuePair param : params)
-			{
-				data.append(URLEncoder.encode(param.key, "UTF-8"))
-				.append("=")
-				.append(URLEncoder.encode(param.value, "UTF-8"))
-				.append("&");
-			}
 			
-				
-			// Send data
-			URL url = new URL(address+"?"+data.toString());
-			System.out.println(url.toExternalForm());
-			URLConnection conn = url.openConnection();
-
-			// Get the response
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			return loadPage(address+"?"+createParamString(params), HTTPMethod.GET);
 			
-			StringBuilder sb = new StringBuilder();
-			
-			while(br.ready())
-			{
-				sb.append(br.readLine());
-			}
-			
-			br.close();
-			
-			return sb.toString();
+//			// Send data
+//			URL url = new URL(address+"?"+data.toString());
+//			System.out.println(url.toExternalForm());
+//			URLConnection conn = url.openConnection();
+//
+//			// Get the response
+//			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//			
+//			StringBuilder sb = new StringBuilder();
+//			
+//			while(br.ready())
+//			{
+//				sb.append(br.readLine());
+//			}
+//			
+//			br.close();
+//			
+//			return sb.toString();
 			
 		} 
 		catch (Exception e) 
@@ -216,6 +210,26 @@ public class URLUtil
 		return null;
 	}
 	
+	
+	private static String createParamString(List<KeyValuePair> params)
+	{
+		
+		StringBuilder data = new StringBuilder();
+		for(KeyValuePair param : params)
+		{
+			try{
+				data.append(URLEncoder.encode(param.key, "UTF-8"))
+				.append("=")
+				.append(URLEncoder.encode(param.value, "UTF-8"))
+				.append("&");	
+			}
+			catch(UnsupportedEncodingException uee)
+			{
+				assert false;
+			}
+		}
+		return data.toString();
+	}
 	
 
 	/**

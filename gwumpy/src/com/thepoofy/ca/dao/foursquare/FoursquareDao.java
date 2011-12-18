@@ -144,7 +144,10 @@ public class FoursquareDao
 	 */
 	private <T> T unwrap(String json, Results<T> adapter) throws FoursquareException, JsonSyntaxException
 	{
-//		Log.d(Constants.TAG, "Response: "+json);
+		if(json == null)
+		{
+			return null;
+		}
 		
 		ResultsParser<T> parser = JsonUtil.getParser(adapter);
 		

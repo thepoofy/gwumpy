@@ -65,6 +65,8 @@ public class ServletBase extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
+		System.out.println("Param: "+param+": "+res);
+		
 		if(res != null && !res.isEmpty())
 		{
 			return Integer.parseInt(res);
@@ -75,9 +77,11 @@ public class ServletBase extends HttpServlet
 		}
 	}
 	
-	static Double getParameterDouble(HttpServletRequest req, String param, boolean isRequired) throws Exception
+	static Double getParameterDouble(HttpServletRequest req, String param, boolean isRequired)
 	{
 		String res = getParameter(req, param, isRequired);
+		
+		System.out.println("Param: "+param+": "+res);
 		
 		if(res != null && !res.isEmpty())
 		{
@@ -89,17 +93,19 @@ public class ServletBase extends HttpServlet
 		}
 	}
 	
-	static String getParameter(HttpServletRequest req, String param, boolean isRequired) throws Exception
+	static String getParameter(HttpServletRequest req, String param, boolean isRequired)
 	{
-		if(req.getParameter(param) != null)
+		String res = req.getParameter(param);
+		
+		if(res != null && !res.isEmpty())
 		{
-			return req.getParameter(param);
+			return res;
 		}
 		else
 		{
 			if(isRequired)
 			{
-				throw new Exception("Paramter "+param+" is required.");
+				throw new ParameterException(param);
 			}
 			return null;
 		}

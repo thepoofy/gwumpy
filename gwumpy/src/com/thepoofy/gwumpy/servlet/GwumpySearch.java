@@ -32,9 +32,7 @@ public class GwumpySearch extends ServletBase
 			Double lat = getParameterDouble(request, "lat", true);
 			Double lng = getParameterDouble(request, "lng", true); //Double.parseDouble(request.getParameter("lng"));
 			Integer llAcc = getParameterInteger(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
-//			String dist = request.getParameter("distance");
 			String cat = getParameter(request, "category", false);
-//			String price = request.getParameter("price");
 			
 			Location loc = new Location();
 			loc.setLatitude(lat);
@@ -53,6 +51,8 @@ public class GwumpySearch extends ServletBase
 			VenueSearchResponse vsr = dao.browse(loc, radius, category.getFsqId());
 			
 			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
+			
+			
 			
 			doResponse(venues, response);
 		}
