@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -24,6 +25,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 public class URLUtil
 {
+	private static final Logger log = Logger.getLogger(URLUtil.class.getName());
 	
 	/**
 	 * 
@@ -108,12 +110,15 @@ public class URLUtil
 		String results = null;
 		try
 		{
-			System.out.println("Loading: " + uri);
+			log.info("Loading: "+uri);
 			
 			HTTPRequest request = new HTTPRequest(new URL(uri), method);
 			request.setHeader(new HTTPHeader("User-Agent", "gwumpy.com beta"));
 			
 			HTTPResponse res = fetcher.fetch(request);
+			
+//			Future<HTTPResponse> future = fetcher.fetchAsync(request);
+//			future.
 			
 			if (res.getResponseCode() == 200)
 			{
@@ -121,7 +126,7 @@ public class URLUtil
 			}
 			else
 			{
-				System.err.println("Unable to load page: " + uri + "\nResponse Code:" + res.getResponseCode());
+				log.warning("Unable to load page: " + uri + "\nResponse Code:" + res.getResponseCode());
 			}
 		}
 		catch(Exception e)

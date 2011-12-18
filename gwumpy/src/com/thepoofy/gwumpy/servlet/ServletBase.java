@@ -3,6 +3,8 @@ package com.thepoofy.gwumpy.servlet;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +24,16 @@ import com.williamvanderhoef.foursquare.parsers.ResultsParser;
 @SuppressWarnings("serial")
 public class ServletBase extends HttpServlet
 {
-
+	private static final Logger log = Logger.getLogger(ServletBase.class.getName());
+	
 	
 	static void doResponse(Object o, HttpServletResponse response) throws JsonSyntaxException, IOException
 	{
 		ResultsParser<Object> parser = JsonUtil.getParser(Object.class);
 		String res = parser.toJson(o);
 		
-		System.out.println("response: " +res);
+//		System.out.println("response: " +res);
+		log.info(res);
 		
 		response.setContentType("application/json");
 		response.getWriter().append(res);
@@ -40,8 +44,9 @@ public class ServletBase extends HttpServlet
 	
 	static void doError(Throwable t, HttpServletResponse response)
 	{
-		System.out.println(t.getMessage());
-		t.printStackTrace();
+//		System.out.println(t.getMessage());
+//		t.printStackTrace();
+		log.log(Level.SEVERE, t.getMessage(), t);
 		response.setStatus(400);
 		response.setContentType("application/json");
 		
@@ -56,8 +61,7 @@ public class ServletBase extends HttpServlet
 			
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	
@@ -65,7 +69,7 @@ public class ServletBase extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		System.out.println("Param: "+param+": "+res);
+		log.info("Param: "+param+": "+res);
 		
 		if(res != null && !res.isEmpty())
 		{
@@ -81,7 +85,7 @@ public class ServletBase extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		System.out.println("Param: "+param+": "+res);
+		log.info("Param: "+param+": "+res);
 		
 		if(res != null && !res.isEmpty())
 		{
