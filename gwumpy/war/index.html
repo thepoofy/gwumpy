@@ -5,88 +5,130 @@
   <link rel="stylesheet" href="assets/stylesheets/jquery.mobile-1.0.min.css" />
   <link rel="stylesheet" href="assets/stylesheets/jq-mobile-green-button-theme.css" />
   <link rel="stylesheet" href="assets/stylesheets/main.css" />
+  <link rel="shortcut icon" href="assets/stylesheets/images/twitter-grump.png" />
   <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/jquery.mobile-1.0.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
+  
   <script>
-    $('#splash').live('pagecreate', function(event) {
-      $('#btnInit').click( function(event) {
-        $.mobile.changePage('#homepage', {                                                                                               
-          transition: 'flip'                                                                                                      
-        });          
-      });
+	var hasGeoLocation = false;
+  
+	
+  	$('#splash').live('pagecreate', function(event)
+   	{
+  		$('#btnInit').attr('disabled', true);
+  		initiate_geolocation();
+		
+  		//onGeoLocationEnabled();
+  		
+    	$('#btnInit').click( function(event)
+    	{
+    		if(hasGeoLocation)
+    		{
+    			$.mobile.changePage('#homepage', {
+        			transition: 'flip'
+        		});
+    		}
+    		else
+    		{
+				$.mobile.changePage("#onError", {
+					transition: 'pop',
+					
+				});
+    		}
+    	});
     });
-
-    $('#homepage').live('pagebeforecreate', function(event) {
-      initiate_geolocation();
-    });
-
-    $('#homepage').live('pagecreate', function(event) {
-      $('#search').click( function(event) {
-        event.preventDefault();
-        var form_data = $('form#search_form').serialize();
-        $.ajax({
-         url: "/gwumpy/search",
-         data: form_data,
-         dataType: 'json',
-         success: function(data) 
-         {
-           //alert(data);
-           
-           $.each(data, function(i, resp) {
-        	 //  alert('yes');
-        	   //alert(i);
-        	 //  alert(resp.name);
-             var list_data = '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow"><li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c"><a href="#details" class="ui-link-inherit"><h3 class="ui-li-heading">'+resp.name+'-'+resp.category+'</h3><p class="ui-li-desc"><strong>'+resp.address+'</strong></p><p class="ui-li-desc">People Here Now: '+resp.hereNowCount+'</p><p class="ui-li-desc"><strong>'+resp.distance+'</strong> meters</p></a></li></ul>';
-
-
-             $(list_data).appendTo("#results_list");
-           });
-           
-/*            $('#results').live('pagebeforecreate', function(event) {
-alert('please work');
-             
-           }); */
-           
-           $.mobile.changePage('#results', {                                                                                               
-             transition: 'slide'
-           });
-         }
-        });
+	
+    $('#homepage').live('pagecreate', function(event)
+	{
+    	if(!isLocationFound())
+    	{
+    		initiate_geolocation();
+    	}
+    	
+		$('#search').click( function(event) 
+		{
+			event.preventDefault();
+			
+			var form_data = $('form#search_form').serialize();
+	        $.ajax({
+	         url: "/gwumpy/search",
+	         data: form_data,
+	         dataType: 'json',
+	         success: function(data) 
+	         {
+				$.each(data, function(i, resp) 
+				{
+	        		var list_data = '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow"><li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c"><a href="#details" class="ui-link-inherit"><h3 class="ui-li-heading">'+resp.name+'-'+resp.category+'</h3><p class="ui-li-desc"><strong>'+resp.address+'</strong></p><p class="ui-li-desc">People Here Now: '+resp.hereNowCount+'</p><p class="ui-li-desc"><strong>'+resp.distance+'</strong> meters</p></a></li></ul>';
+	
+					$(list_data).appendTo("#results_list");
+	           });
+	           
+				$.mobile.changePage('#results', {
+					transition: 'slide'
+				});
+	         }
+	        });
       });
     });
 
     function initiate_geolocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(handle_geolocation_query, handle_errors);
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handle_geolocation_query, handle_errors, {timeout: 10000});
       } else {
         yqlgeo.get('visitor', normalize_yql_response);
       }
     }
+    
+    function onGeoLocationEnabled()
+  	{
+    	//alert("success");
+    	hasGeoLocation = true;
+    	
+    	$('#btnInit').attr('disabled', false);
+    	try
+    	{
+    		$('#btnInit').button('enable');
+    	}
+    	catch(e){}
+    	
+		$('#search').attr('disabled', false);
+    	
+    	try
+    	{
+    		$('#search').button('enable');
+    	}
+    	catch(e){}
+  	}
 
-    function handle_errors(error) {
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          $.mobile.changePage("#onError", {
-            transition: 'pop', role: 'dialog'
-          });
-        break;
-        case error.POSITION_UNAVAILABLE:
-          $.mobile.changePage("#onError", {
-            transition: 'flip', role: 'dialog'
-          });
-        break;
-        case error.TIMEOUT:
-          $.mobile.changePage("#onError", {
-            transition: 'flip', role: 'dialog'
-          });
-        break;
-        default:
-          $.mobile.changePage("#onError", {
-            transition: 'flip', role: 'dialog'
-          });
-        break;
-      }
+    function handle_errors(error) 
+    {
+    	//alert("fail");
+    	/*
+		switch(error.code) 
+		{
+	        case error.PERMISSION_DENIED:
+			  $.mobile.changePage("#onError", {
+	            transition: 'pop'
+	          });
+	        break;
+	        case error.POSITION_UNAVAILABLE:
+	          $.mobile.changePage("#onError", {
+	            transition: 'flip'
+	          });
+	        break;
+	        case error.TIMEOUT:
+	          $.mobile.changePage("#onError", {
+	            transition: 'flip'
+	          });
+	        break;
+	        default:
+	          $.mobile.changePage("#onError", {
+	            transition: 'flip'
+	          });
+	        break;
+		}
+    	*/
     }
 
     function normalize_yql_response(response) {
@@ -96,38 +138,42 @@ alert('please work');
         return;
       }
 
-      var position = {
-        coords : {
-          latitude: response.place.centroid.latitude,
-          longitude: response.place.centroid.longitude
-        },
-        address : {
-          city: response.place.locality2.content,
-          region: response.place.admin1.content,
-          country: response.place.country.content
-        }
-      };
+		var position = {
+	        coords : {
+	          latitude: response.place.centroid.latitude,
+	          longitude: response.place.centroid.longitude,
+	          accuracy: response.place.centroid.accuracy
+	        },
+	        address : {
+	          city: response.place.locality2.content,
+	          region: response.place.admin1.content,
+	          country: response.place.country.content
+	        }
+		};
 
-      handle_geolocation_query(position);
+		handle_geolocation_query(position);
     }
 
-    function handle_geolocation_query(position) {
-/*
-      $.mobile.changePage('success.html', {
-        transition: 'flip',
-        role: 'dialog',
-        data: position.coords.latitude,
-        type: 'get'
-      });
-*/
-      $.mobile.loadPage('#onSuccess');
-      $('#onSuccess #latitude').val(position.coords.latitude);                                                                                     
-      $('#onSuccess #longitude').val(position.coords.longitude);
-      $('#onSuccess #accuracy').val(position.coords.accuracy);
-      $('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
-      $('#homepage #search_form #longitude').val($('#onSuccess #longitude').val());
-      $('#homepage #search_form #accuracy').val($('#onSuccess #accuracy').val());
-      $.mobile.loadPage('#results');
+    function handle_geolocation_query(position) 
+    {
+		onGeoLocationEnabled();
+
+		$.mobile.loadPage('#onSuccess');
+		$('#onSuccess #latitude').val(position.coords.latitude);                                                                                     
+		$('#onSuccess #longitude').val(position.coords.longitude);
+		$('#onSuccess #accuracy').val(position.coords.accuracy);
+		
+		$('#homepage #search_form #latitude').val($('#onSuccess #latitude').val());
+		$('#homepage #search_form #longitude').val($('#onSuccess #longitude').val());
+		$('#homepage #search_form #accuracy').val($('#onSuccess #accuracy').val());
+		
+		$.mobile.loadPage('#results');
+    }
+    
+    
+    function isLocationFound()
+    {
+    	return ($('#homepage #search_form #latitude').val() && $('#homepage #search_form #longitude').val() && $('#homepage #search_form #accuracy').val());
     }
 
     </script>
@@ -139,7 +185,7 @@ alert('please work');
       </div>
       <div data-role="content">
         <center><img src="assets/stylesheets/images/grump.png"/></center>
-        <button id="btnInit" data-theme="g">I'm hungry!</button>
+        <button id="btnInit" data-theme="g" disabled="disabled">I'm hungry!</button>
       </div>
     </div>
     <div id="homepage" data-role="page">
@@ -177,7 +223,7 @@ alert('please work');
           <input id="longitude" type="hidden" name="lng" value="" />
           <input id="accuracy" type="hidden" name="llAcc" value="" />
           <br/>
-          <button id="search" data-theme="g">Feed the Gwump!</button>
+          <button id="search" data-theme="g" disabled="disabled">Feed the Gwump!</button>
         </form>
       </div>
       <div data-role="footer">
@@ -185,9 +231,23 @@ alert('please work');
       </div>
     </div>
     <div id="onError" data-role="page">
-      <div data-role="header"><h1>Oops...</h1></div>
+   	  
+      <div data-role="header">
+      	<a href="#splash" data-rel="back" data-theme="a">Back</a>
+      	<h1>Oops...</h1>
+      </div>
       <div data-role="content">
-        <p>We could not determine your location for some reason. Make sure you give us permission by changing your browser settings or try again later.</p>
+        <p>Gwumpy could not determine your location for some reason. Make sure you give us permission by changing your browser settings or try again later.</p>
+      </div>
+    </div>
+    <div id="onGeoDenied" data-role="page">
+      <div data-role="header">
+      	<a href="#splash" data-rel="back" data-theme="a">Back</a>
+      	<h1>Oops...</h1>
+      </div>
+      <div data-role="content">
+        <p>Gwumpy needs access to your location to find nearby places to eat.</p>
+        <button></button>
       </div>
     </div>
     <div id="onSuccess" data-role="page">

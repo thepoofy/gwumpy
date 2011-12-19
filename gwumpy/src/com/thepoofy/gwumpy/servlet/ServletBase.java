@@ -32,20 +32,16 @@ public class ServletBase extends HttpServlet
 		ResultsParser<Object> parser = JsonUtil.getParser(Object.class);
 		String res = parser.toJson(o);
 		
-//		System.out.println("response: " +res);
 		log.info(res);
 		
 		response.setContentType("application/json");
 		response.getWriter().append(res);
 		response.getWriter().flush();
 		response.setStatus(200);
-		
 	}
 	
 	static void doError(Throwable t, HttpServletResponse response)
 	{
-//		System.out.println(t.getMessage());
-//		t.printStackTrace();
 		log.log(Level.SEVERE, t.getMessage(), t);
 		response.setStatus(400);
 		response.setContentType("application/json");
