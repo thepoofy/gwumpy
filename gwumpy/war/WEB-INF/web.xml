@@ -21,6 +21,10 @@
     <servlet-class>com.thepoofy.gwumpy.servlet.GwumpyDetails</servlet-class>
   </servlet>
   
+  <servlet>
+    <servlet-name>BasicSearch</servlet-name>
+    <servlet-class>com.thepoofy.gwumpy.servlet.YelpSearch</servlet-class>
+  </servlet>
   
   
   
@@ -38,6 +42,12 @@
     <servlet-name>GwumpyDetailsServlet</servlet-name>
     <url-pattern>/gwumpy/details</url-pattern>
   </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>BasicSearch</servlet-name>
+    <url-pattern>/search</url-pattern>
+  </servlet-mapping>
+  
   
   <!-- Default page to serve -->
   <welcome-file-list>

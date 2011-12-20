@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.codehaus.jackson.map.ObjectMapper;
+import java.util.logging.Logger;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
 import com.thepoofy.constants.VenueCategoryEnum;
 import com.thepoofy.gwumpy.yelp.Yelp;
+import com.thepoofy.gwumpy.yelp.model.Business;
+import com.thepoofy.gwumpy.yelp.model.YelpSearchResults;
 import com.thepoofy.util.Location;
 import com.williamvanderhoef.foursquare.model.Venue;
 import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
@@ -24,6 +25,9 @@ import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 @SuppressWarnings("serial")
 public class YelpSearch extends VenueSearch<Map<String, Object>>
 {
+	private static final Logger log = Logger.getLogger(YelpSearch.class.getName());
+	
+	
 	@Override
 	List<Map<String, Object>> search(Location loc, Integer radius, VenueCategoryEnum category)
 			throws Exception 
@@ -31,7 +35,7 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 		
 		List<Venue> fsqPlaces = find4sq(loc, radius, category);
-		List<Map<String, Object>> businessList = findYelp(loc, radius, category);
+		List<Business> businessList = findYelp(loc, radius, category);
 		
 		for(Venue v : fsqPlaces)
 		{
@@ -39,12 +43,8 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 			
 			place.put("fsq", v);
 			
-			Map<String, Object> biz = findSimilarYelpPlace(v, businessList);
-			
-			if(biz != null)
-			{
-				place.put("yelp", biz);
-			}
+			Business biz = findSimilarYelpPlace(v, businessList);
+			place.put("yelp", biz);
 			
 			data.add(place);
 		}
@@ -63,15 +63,12 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		return vsr.getVenues();
 	}
 	
-	private List<Map<String, Object>> findYelp(Location loc, Integer radius, VenueCategoryEnum category) throws Exception
+	private List<Business> findYelp(Location loc, Integer radius, VenueCategoryEnum category) throws Exception
 	{
 		Yelp dao = new Yelp();
-		String response = dao.search(null, loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId());
+		YelpSearchResults response = dao.search(null, loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId());
 		
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> yelpBusinesses = mapper.readValue(response, (new HashMap<String, Object>()).getClass());
-		
-		return (List<Map<String, Object>>)yelpBusinesses.get("businesses");
+		return response.getBusinesses();
 	}
 	
 	/**
@@ -79,14 +76,16 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 	 * @param v
 	 * @param yelp
 	 */
-	private Map<String, Object> findSimilarYelpPlace(Venue v, List<Map<String, Object>> yelp)
+	private Business findSimilarYelpPlace(Venue v, List<Business> yelp)
 	{
-		for(Map<String, Object> y : yelp)
+		for(Business b : yelp)
 		{
-//			if(v.getLocation().getPostalCode().subSequence(0, 5).equals(y.get("location").get("postal_code").subSequence(0, 5)))
-//			{
-//				
-//			}
+			if(v.getLocation().getPostalCode().subSequence(0, 5).equals(b.getLocation().getPostal_code().subSequence(0, 5)))
+			{
+				log.info(b.getName());
+				
+				return b;
+			}
 		}
 		
 		return null;

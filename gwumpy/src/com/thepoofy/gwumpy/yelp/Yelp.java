@@ -1,5 +1,11 @@
 package com.thepoofy.gwumpy.yelp;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
@@ -8,6 +14,7 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import com.thepoofy.constants.Constants;
+import com.thepoofy.gwumpy.yelp.model.YelpSearchResults;
 
 /**
  * Example code based on code from Nicholas Smith at
@@ -17,7 +24,10 @@ import com.thepoofy.constants.Constants;
  * 
  * Example for accessing the Yelp API.
  */
-public class Yelp {
+public class Yelp 
+{
+	private static final Logger log = Logger.getLogger(Yelp.class.getName());
+
 
 	OAuthService service;
 	Token accessToken;
@@ -47,25 +57,32 @@ public class Yelp {
 	 * @param longitude
 	 * 
 	 * @return JSON string response
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
-	public String search(String term, double latitude, double longitude, int radius, String category) {
+	public YelpSearchResults search(String term, double latitude, double longitude, int radius, String category) throws JsonParseException, JsonMappingException, IOException {
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				"http://api.yelp.com/v2/search");
 		
 		request.addQuerystringParameter("ll", latitude + "," + longitude);
 		request.addQuerystringParameter("radius_filter", ""+radius);
 		request.addQuerystringParameter("category_filter", category);
-		request.addQuerystringParameter("limit", "100");
+		request.addQuerystringParameter("limit", "20");
 		
 		if(term != null)
 		{
 			request.addQuerystringParameter("term", term);
 		}
 		
-		
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
-		return response.getBody();
+		
+		String res = response.getBody();
+		log.info(res);
+		System.out.println(res);
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(res, YelpSearchResults.class);
 	}
 
 	// // CLI
