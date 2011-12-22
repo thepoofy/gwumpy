@@ -5,6 +5,7 @@ package com.thepoofy.gwumpy.servlet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -60,13 +61,43 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		
 		VenueSearchResponse vsr = dao.browse(loc, radius, category.getFsqId());
 		
+		Iterator<Venue> itr = vsr.getVenues().iterator();
+		while(itr.hasNext())
+		{
+			Venue v = itr.next();
+			if(v.getStats().getCheckinsCount() < 25)
+			{
+				itr.remove();
+			}
+		}
+		
 		return vsr.getVenues();
 	}
 	
 	private List<Business> findYelp(Location loc, Integer radius, VenueCategoryEnum category) throws Exception
 	{
 		Yelp dao = new Yelp();
-		YelpSearchResults response = dao.search(null, loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId());
+		YelpSearchResults response = dao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 0);
+		List<Business> bizList = new ArrayList<Business>();
+		
+		for(Business b : response.getBusinesses())
+		{
+			log.info(b.getName());
+			bizList.add(b);
+		}
+//		bizList.addAll(response.getBusinesses());
+		
+		if(response.getTotal() > 20)
+		{
+			YelpSearchResults response1 = dao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 20);
+			for(Business b : response1.getBusinesses())
+			{
+				log.info(b.getName());
+				bizList.add(b);
+			}
+//			bizList.addAll(response1.getBusinesses());
+		}
+		
 		
 		return response.getBusinesses();
 	}
@@ -78,19 +109,74 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 	 */
 	private Business findSimilarYelpPlace(Venue v, List<Business> yelp)
 	{
+		int bestScore = 0;
+		Business bestBiz = null;
+		
 		for(Business b : yelp)
 		{
-			if(v.getLocation().getPostalCode().subSequence(0, 5).equals(b.getLocation().getPostal_code().subSequence(0, 5)))
+			int score = 0;
+			score += comparePostalCode(v,b);
+			score += compareName(v,b);
+			score += compareAddress(v,b);
+			
+			if(score > bestScore)
 			{
-				log.info(b.getName());
-				
-				return b;
+//				log.info(v.getName()+" : "+score);
+				bestBiz = b;
+				bestScore = score;
 			}
 		}
 		
-		return null;
+//		if(bestBiz != null)
+//		{
+//			log.info(bestBiz.getName()+" : "+bestScore);
+//		}
+//		else
+//		{
+//			log.info("no match for "+v.getName());
+//		}
+		
+		return bestBiz;
 	}
 	
 	
+	private static int comparePostalCode(Venue v, Business b)
+	{
+		if (v.getLocation() != null 
+				&& v.getLocation().getPostalCode() != null
+				&& b.getLocation() != null
+				&& b.getLocation().getPostal_code() != null)
+		{
+			return (b.getLocation().getPostal_code().substring(0, 5).equals(
+					v.getLocation().getPostalCode().substring(0, 5))? 1: -10);
+		}
+		
+		return 0;
+	}
 	
+	private static int compareName(Venue v, Business b)
+	{
+		if (v.getName() != null
+				&& b.getName() != null)
+		{
+			return (b.getName().equalsIgnoreCase(v.getName())? 10: -5);
+		}
+		
+		return 0;
+	}
+	
+	private static int compareAddress(Venue v, Business b)
+	{
+		if (v.getLocation() != null 
+				&& v.getLocation().getAddress() != null
+				&& b.getLocation() != null
+				&& b.getLocation().getAddress().size() > 0
+				&& b.getLocation().getAddress() != null)
+		{
+			return (v.getLocation().getAddress().equals(
+					b.getLocation().getAddress().get(0))? 20: -5);
+		}
+		
+		return 0;
+	}
 }

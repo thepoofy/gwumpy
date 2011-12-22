@@ -42,7 +42,7 @@ public class ServletBase extends HttpServlet
 	
 	static void doError(Throwable t, HttpServletResponse response)
 	{
-		log.log(Level.SEVERE, t.getMessage(), t);
+		log.log(Level.SEVERE, t.getClass().getName(), t);
 		response.setStatus(400);
 		response.setContentType("application/json");
 		

@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/Foursquare_V2_Java_Adapter.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/Foursquare_V2_Java_Adapter.jar" sourcepath="/Foursquare_V2_Java_Adapter"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-core-asl-1.8.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-mapper-asl-1.8.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.4.jar"/>
