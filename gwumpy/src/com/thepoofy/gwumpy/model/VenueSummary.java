@@ -3,6 +3,7 @@ package com.thepoofy.gwumpy.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thepoofy.gwumpy.yelp.model.Business;
 import com.williamvanderhoef.foursquare.model.ImageDefinition;
 import com.williamvanderhoef.foursquare.model.Venue;
 import com.williamvanderhoef.foursquare.model.subtypes.Category;
@@ -25,12 +26,13 @@ public class VenueSummary
 
 	//people count
 	private Integer hereNowCount;
-	
+
+	//star rating
+	private Double starRating;
+	private String starRatingImgUrl;
+	private Integer numRatings;
 	
 	//DETAILS
-	//star rating
-	private String starRating;
-	private String starRatingImgUrl;
 	//$$$
 	private String costRating;
 	
@@ -64,6 +66,14 @@ public class VenueSummary
 		vs.setHereNowCount(v.getHereNow().getCount());
 		
 		return vs;
+	}
+	
+	public void addYelpInfo(Business b)
+	{
+		this.setStarRating(b.getRating());
+		this.setStarRatingImgUrl(b.getRating_img_url_small());
+		
+		this.setNumRatings(b.getReview_count());
 	}
 	
 	
@@ -167,7 +177,7 @@ public class VenueSummary
 	/**
 	 * @return the starRating
 	 */
-	public String getStarRating()
+	public Double getStarRating()
 	{
 		return starRating;
 	}
@@ -175,7 +185,7 @@ public class VenueSummary
 	/**
 	 * @param starRating the starRating to set
 	 */
-	public void setStarRating(String starRating)
+	public void setStarRating(Double starRating)
 	{
 		this.starRating = starRating;
 	}
@@ -293,6 +303,22 @@ public class VenueSummary
 	public void setAllMenuUrl(String allMenuUrl)
 	{
 		this.allMenuUrl = allMenuUrl;
+	}
+
+	/**
+	 * @return the numRatings
+	 */
+	public Integer getNumRatings()
+	{
+		return numRatings;
+	}
+
+	/**
+	 * @param numRatings the numRatings to set
+	 */
+	public void setNumRatings(Integer numRatings)
+	{
+		this.numRatings = numRatings;
 	}
 	
 }
