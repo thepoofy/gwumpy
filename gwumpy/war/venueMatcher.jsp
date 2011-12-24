@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="shortcut icon" href="assets/stylesheets/images/twitter-grump.png" />
 <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
 <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA8PcXaepll3qB9JajxXmUnT_G6UXWYgE4&sensor=true"></script>
@@ -46,45 +47,26 @@
 			$("#results_list").empty();
 			
 			$.ajax({
-	         url: $("#searchForm").attr("action"),
-	         data: $('#searchForm').serialize(),
-	         dataType: 'json',
-	         success: function(data) 
-	         {
-	        	 clearCircles();
-	        	 drawSearchCircle(fsqMap);
-	        	 drawSearchCircle(yelpMap);
-	        	 
+	        url: $("#searchForm").attr("action"),
+	        data: $('#searchForm').serialize(),
+	        dataType: 'json',
+	        success: function(response) 
+	        {
+	        	clearCircles();
+	        	drawSearchCircle(fsqMap);
+	        	drawSearchCircle(yelpMap);
+	        	var data = response.data;
 	        	if(data !== null && data.length > 0)
 	        	{
 	        		$.each(data, function(i, resp) 
 					{
 	        			var row = $(document.createElement("tr"));
 	        			
-	        			var td = $(document.createElement("td"));
-	        			if(data[i].fsq)
-	        			{
-	        				td.append(document.createTextNode(data[i].fsq.name));
-	        			}
-	        			if(data[i].fsq.location)
-	        			{
-	        				td.append(document.createElement("br"))
-	        				td.append(document.createTextNode(data[i].fsq.location.address))
-	        				td.append(document.createElement("br"))
-	        				td.append(document.createTextNode(data[i].fsq.location.postalCode))
-	        				
-	        			}
+	        			var td = renderFsqTd(data[i].fsq);
 	        			row.append(td);
 	        			
-	        			var td2 = $(document.createElement("td"));
-	        			if(data[i].yelp !== null)
-	        			{
-	        				td2.append(document.createTextNode(data[i].yelp.name));
-	        				td2.append(document.createElement("br"));
-	        				td2.append(document.createTextNode(data[i].yelp.location.address[0]));
-	        				td2.append(document.createElement("br"));
-	        				td2.append(document.createTextNode(data[i].yelp.location.postal_code));
-	        			}
+	        			var td2 = renderYelpTd(data[i].yelp);
+	        			
 	        			row.append(td2);
 	        			
 	        			$("#results_list").append(row);
@@ -194,7 +176,53 @@
 		circles[0] = null;
 		circles[1] = null;
     }
-
+    
+    function renderFsqTd(venue)
+    {
+    	var td = $(document.createElement("td"));
+    	
+    	if(venue === null)
+    	{
+    		return td;
+    	}
+    	
+    	td.append(document.createTextNode(venue.name));
+	
+		if(venue.location)
+		{
+			td.append(document.createElement("br"));
+			td.append(document.createTextNode(venue.location.address));
+			td.append(document.createElement("br"));
+			td.append(document.createTextNode(venue.location.postalCode));
+		}
+		if(venue.categories[0] && venue.categories[0].name)
+		{
+			td.append(document.createElement("br"));
+			td.append(document.createTextNode(venue.categories[0].name));
+		}
+		
+		return td;
+    }
+    
+    function renderYelpTd(yelpBiz)
+    {
+    	var td2 = $(document.createElement("td"));
+		if(yelpBiz !== null)
+		{
+			td2.append(document.createTextNode(yelpBiz.name));
+			td2.append(document.createElement("br"));
+			td2.append(document.createTextNode(yelpBiz.location.address[0]));
+			td2.append(document.createElement("br"));
+			td2.append(document.createTextNode(yelpBiz.location.postal_code));
+			if(yelpBiz.categories[0] !== null && yelpBiz.categories[0][0] !== null)
+			{
+				td2.append(document.createElement("br"));
+				td2.append(document.createTextNode(yelpBiz.categories[0][0]));
+			}
+		}
+    	
+		return td2;
+    }
   
   </script>
   
@@ -206,6 +234,7 @@
 		<label>Latitude: </label><input type="text" name="lat" id="latitude" /><br />
 		<label>Longitude: </label><input type="text" name="lng" id="longitude" /><br />
 		<label>Accuracy: </label><input type="text" name="llAcc" id="accuracy" /><br />
+		<label>Radius: </label><input type="text" name="radius" id="radius" /><br />
 		<label>Category: </label><select name="category" value="FOOD">
 		<% for(VenueCategoryEnum cat : VenueCategoryEnum.values()){ %>
 			<option value="<%= cat.name() %>"><%= cat.name() %></option>

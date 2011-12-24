@@ -2,7 +2,7 @@ package com.thepoofy.constants;
 
 public enum VenueCategoryEnum
 {
-	FOOD("4d4b7105d754a06374d81259", "restaurants"),	//ANYTHING!
+	FOOD("4d4b7105d754a06374d81259", "restaurants,food"),	//ANYTHING!
 	AMERICAN("4bf58dd8d48988d14e941735","newamerican"),
 	FRENCH("4bf58dd8d48988d10c941735","french"),
 	ITALIAN("4bf58dd8d48988d110941735","italian"),

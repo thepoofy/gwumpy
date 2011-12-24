@@ -70,7 +70,7 @@ public class Yelp
 		request.addQuerystringParameter("ll", latitude + "," + longitude);
 		request.addQuerystringParameter("radius_filter", ""+radius);
 		request.addQuerystringParameter("category_filter", category);
-		request.addQuerystringParameter("limit", "20");
+		request.addQuerystringParameter("limit", "20");		//TODO try 40
 		request.addQuerystringParameter("offset", ""+offset);
 		
 //		if(term != null)

@@ -5,6 +5,7 @@ package com.thepoofy.gwumpy.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,8 @@ import com.thepoofy.util.Location;
 @SuppressWarnings("serial")
 public abstract class VenueSearch<T> extends ServletBase
 {
+	private static final Logger log = Logger.getLogger(VenueSearch.class.getName());
+	
 	abstract List<T> search(Location loc, Integer radius, VenueCategoryEnum category) throws Exception;
 	
 	private void handleResponse(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
@@ -27,9 +30,10 @@ public abstract class VenueSearch<T> extends ServletBase
 		try
 		{
 			Double lat = getParameterDouble(request, "lat", true);
-			Double lng = getParameterDouble(request, "lng", true); //Double.parseDouble(request.getParameter("lng"));
-			Integer llAcc = getParameterInteger(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
+			Double lng = getParameterDouble(request, "lng", true);
+			Integer llAcc = getParameterInteger(request, "llAcc", false);
 			String cat = getParameter(request, "category", false);
+			Integer radius = getParameterInteger(request, "radius", false);
 			
 			Location loc = new Location();
 			loc.setLatitude(lat);
@@ -40,11 +44,15 @@ public abstract class VenueSearch<T> extends ServletBase
 			}
 			loc.setAccuracy(llAcc);
 			
-			Integer radius = 400;
+			if(radius == null)
+			{
+				radius = 400;	
+			}
 			
 			//guarantees a category
 			VenueCategoryEnum category = VenueCategoryEnum.find(cat);
 			
+			log.info("category: "+category.name()+" radius: "+radius);
 			List<T> venues = search(loc, radius, category);
 			
 			doResponse(venues, response);

@@ -12,10 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.williamvanderhoef.foursquare.adapters.JsonSyntaxException;
-import com.williamvanderhoef.foursquare.parsers.JsonUtil;
-import com.williamvanderhoef.foursquare.parsers.ResultsParser;
-
 /**
  * 
  * @author williamvanderhoef
@@ -27,45 +23,65 @@ public class ServletBase extends HttpServlet
 	private static final Logger log = Logger.getLogger(ServletBase.class.getName());
 	
 	
-	static void doResponse(Object o, HttpServletResponse response) throws JsonSyntaxException, IOException
+	static void doResponse(Object o, HttpServletResponse response)
 	{
-		ResultsParser<Object> parser = JsonUtil.getParser(Object.class);
-		String res = parser.toJson(o);
-		
-		log.info(res);
-		
-		response.setContentType("application/json");
-		response.getWriter().append(res);
-		response.getWriter().flush();
-		response.setStatus(200);
+		try
+		{
+			Map<String, Object> results = new HashMap<String, Object>();
+			results.put("data", o);
+			results.put("status", 200);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.writeValue(response.getWriter(), results);
+			
+			log.info(mapper.writeValueAsString(o));
+			
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("application/json");
+//			response.getWriter().append(res);
+			response.getWriter().flush();
+			response.setStatus(200);
+			
+		}
+		catch(IOException e)
+		{
+			doError(e, response);
+		}
 	}
 	
 	static void doError(Throwable t, HttpServletResponse response)
 	{
 		log.log(Level.SEVERE, t.getClass().getName(), t);
-		response.setStatus(400);
+		t.printStackTrace();
+		
+		Map<String, Object> results = new HashMap<String, Object>();
+		results.put("data", null);
+		results.put("status", 500);
+		results.put("msg", "Oops Gwumpy slipped and fell. Our developers are checking on him now.");	
+		
+		response.setStatus(500);
+		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+		
+		ObjectMapper mapper = new ObjectMapper();
 		
 		try
 		{
-			ObjectMapper mapper = new ObjectMapper();
-			
-			Map<String, String> errors = new HashMap<String, String> ();
-			errors.put("error", t.getMessage());
-			
-			response.getWriter().append(mapper.writeValueAsString(errors)).flush();
-			
-		} catch (IOException e)
-		{
-			log.log(Level.SEVERE, e.getMessage(), e);
+			mapper.writeValue(response.getWriter(), results);
 		}
+		catch(IOException e)
+		{
+			response.setStatus(500);
+		}
+		
+		
 	}
 	
 	static Integer getParameterInteger(HttpServletRequest req, String param, boolean isRequired) throws Exception
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		log.info("Param: "+param+": "+res);
+//		log.info("Param: "+param+": "+res);
 		
 		if(res != null && !res.isEmpty())
 		{
@@ -81,7 +97,7 @@ public class ServletBase extends HttpServlet
 	{
 		String res = getParameter(req, param, isRequired);
 		
-		log.info("Param: "+param+": "+res);
+//		log.info("Param: "+param+": "+res);
 		
 		if(res != null && !res.isEmpty())
 		{

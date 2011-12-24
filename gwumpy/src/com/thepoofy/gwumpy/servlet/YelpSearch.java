@@ -47,12 +47,15 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 	List<Map<String, Object>> search(Location loc, Integer radius, VenueCategoryEnum category)
 			throws Exception 
 	{
-		
 		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 		
 		List<Venue> fsqPlaces = find4sq(loc, radius, category);
 		List<Business> businessList = findYelp(loc, radius, category);
-		
+		if(fsqPlaces == null || fsqPlaces.isEmpty())
+		{
+			log.info("no results found from foursquare");
+			return data;
+		}
 		for(Venue v : fsqPlaces)
 		{
 			Map<String, Object> place = new HashMap<String, Object>();
@@ -65,8 +68,6 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 			
 			data.add(place);
 		}
-		
-		
 		
 		return data;
 	}
@@ -81,8 +82,11 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		while(itr.hasNext())
 		{
 			Venue v = itr.next();
-			if(v.getStats().getCheckinsCount() < 25)
+			if( v.getVerified()
+					|| v.getStats().getUsersCount() < 5
+					|| v.getStats().getCheckinsCount() > 25)
 			{
+				log.info("Removing from results: "+v.getName());
 				itr.remove();
 			}
 		}
@@ -95,22 +99,22 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		YelpSearchResults response = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 0);
 		List<Business> bizList = new ArrayList<Business>();
 		
-		for(Business b : response.getBusinesses())
-		{
-			log.info(b.getName());
-			bizList.add(b);
-		}
-//		bizList.addAll(response.getBusinesses());
+//		for(Business b : response.getBusinesses())
+//		{
+//			log.info(b.getName());
+//			bizList.add(b);
+//		}
+		bizList.addAll(response.getBusinesses());
 		
 		if(response.getTotal() > 20)
 		{
 			YelpSearchResults response1 = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 20);
-			for(Business b : response1.getBusinesses())
-			{
-				log.info(b.getName());
-				bizList.add(b);
-			}
-//			bizList.addAll(response1.getBusinesses());
+//			for(Business b : response1.getBusinesses())
+//			{
+//				log.info(b.getName());
+//				bizList.add(b);
+//			}
+			bizList.addAll(response1.getBusinesses());
 		}
 		
 		

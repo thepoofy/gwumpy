@@ -55,13 +55,13 @@
 	         dataType: 'json',
 	         success: function(data) 
 	         {
-	        	if(data !== null && data.length > 0)
-	        	{
-	        		$.each(data, function(i, resp) 
-					{
-	        			var list_data = '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow"><li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c"><a href="#details" class="ui-link-inherit"><h3 class="ui-li-heading">'+resp.name+'-'+resp.category+'</h3><p class="ui-li-desc"><strong>'+resp.address+'</strong></p><p class="ui-li-desc">People Here Now: '+resp.hereNowCount+'</p><p class="ui-li-desc"><strong>'+resp.distance+'</strong> meters</p></a></li></ul>';
+	        	$("#results_list").empty();
 	        	
-	        			$(list_data).appendTo("#results_list");
+				if(data.status == 200 && data.data !== null && data.data.length > 0)
+				{
+					$.each(data.data, function(i, venue) 
+					{
+						$(createListItem(venue)).appendTo("#results_list");
 					});
 	        	}
 	        	else
@@ -187,11 +187,19 @@
     	return ($('#homepage #search_form #latitude').val() && $('#homepage #search_form #longitude').val() && $('#homepage #search_form #accuracy').val());
     }
     
-    function createListItem()
+    function createListItem(venue)
     {
     	
-    	'<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow"><li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c"><a href="#details" class="ui-link-inherit"><h3 class="ui-li-heading">'+resp.name+'-'+resp.category+'</h3><p class="ui-li-desc"><strong>'+resp.address+'</strong></p><p class="ui-li-desc">People Here Now: '+resp.hereNowCount+'</p><p class="ui-li-desc"><strong>'+resp.distance+'</strong> meters</p></a></li></ul>'
-    	
+    	return '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">'+
+    		'<li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c">'+
+    			'<a href="#details" class="ui-link-inherit">'+
+    				'<h3 class="ui-li-heading">'+venue.name+' - '+venue.category+'</h3>'+
+    				'<p class="ui-li-desc"><strong>'+venue.address+'</strong></p>'+
+    				'<p class="ui-li-desc">People Here Now: '+venue.hereNowCount+'</p>'+
+    				'<p class="ui-li-desc"><strong>'+venue.distance+'</strong> meters</p>'+
+    			'</a>'+
+    		'</li>'+
+    	'</ul>';
     }
 
     </script>
