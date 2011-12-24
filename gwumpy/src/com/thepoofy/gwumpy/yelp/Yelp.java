@@ -49,6 +49,8 @@ public class Yelp
 		this.accessToken = new Token(Constants.YELP_TOKEN, Constants.YELP_TOKEN_SECRET);
 	}
 
+	public static final Integer SEARCH_LIMIT = 20;
+	
 	/**
 	 * Search with term and location.
 	 * 
@@ -70,7 +72,7 @@ public class Yelp
 		request.addQuerystringParameter("ll", latitude + "," + longitude);
 		request.addQuerystringParameter("radius_filter", ""+radius);
 		request.addQuerystringParameter("category_filter", category);
-		request.addQuerystringParameter("limit", "20");		//TODO try 40
+		request.addQuerystringParameter("limit", ""+SEARCH_LIMIT);
 		request.addQuerystringParameter("offset", ""+offset);
 		
 //		if(term != null)

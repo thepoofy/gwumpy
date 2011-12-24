@@ -99,21 +99,12 @@ public class YelpSearch extends VenueSearch<Map<String, Object>>
 		YelpSearchResults response = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 0);
 		List<Business> bizList = new ArrayList<Business>();
 		
-//		for(Business b : response.getBusinesses())
-//		{
-//			log.info(b.getName());
-//			bizList.add(b);
-//		}
 		bizList.addAll(response.getBusinesses());
 		
-		if(response.getTotal() > 20)
+		if(response.getTotal() > Yelp.SEARCH_LIMIT)
 		{
-			YelpSearchResults response1 = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 20);
-//			for(Business b : response1.getBusinesses())
-//			{
-//				log.info(b.getName());
-//				bizList.add(b);
-//			}
+			YelpSearchResults response1 = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), Yelp.SEARCH_LIMIT);
+
 			bizList.addAll(response1.getBusinesses());
 		}
 		
