@@ -4,10 +4,10 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/Foursquare_V2_Java_Adapter.jar" sourcepath="/Foursquare_V2_Java_Adapter"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-core-asl-1.8.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-mapper-asl-1.8.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-mapper-asl-1.8.5.jar" sourcepath="/Users/williamvanderhoef/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.8.5/jackson-mapper-asl-1.8.5-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/scribe-1.1.0.jar" sourcepath="C:/Documents and Settings/Willum/.m2/repository/org/scribe/scribe/1.1.0/scribe-1.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/Foursquare_V2_Java_Adapter_20111220.jar" sourcepath="/Foursquare_V2_Java_Adapter"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
