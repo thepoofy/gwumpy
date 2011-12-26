@@ -28,9 +28,8 @@ public class Yelp
 {
 	private static final Logger log = Logger.getLogger(Yelp.class.getName());
 
-
-	OAuthService service;
-	Token accessToken;
+	private OAuthService service;
+	private Token accessToken;
 
 	/**
 	 * Setup the Yelp API OAuth credentials.
@@ -75,11 +74,6 @@ public class Yelp
 		request.addQuerystringParameter("limit", ""+SEARCH_LIMIT);
 		request.addQuerystringParameter("offset", ""+offset);
 		
-//		if(term != null)
-//		{
-//			request.addQuerystringParameter("term", term);
-//		}
-		
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
 		
@@ -89,19 +83,4 @@ public class Yelp
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.readValue(res, YelpSearchResults.class);
 	}
-
-	// // CLI
-	// public static void main(String[] args)
-	// {
-	// // Update tokens here from Yelp developers site, Manage API access.
-	// String consumerKey = "";
-	// String consumerSecret = "";
-	// String token = "";
-	// String tokenSecret = "";
-	//
-	// Yelp yelp = new Yelp(consumerKey, consumerSecret, token, tokenSecret);
-	// String response = yelp.search("burritos", 30.361471, -87.164326);
-	//
-	// System.out.println(response);
-	// }
 }

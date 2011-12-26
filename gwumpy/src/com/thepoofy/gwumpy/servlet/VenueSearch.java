@@ -81,8 +81,4 @@ public abstract class VenueSearch<T> extends ServletBase
 	{
 		handleResponse(request, response);
 	}
-
-
-	
-	
 }

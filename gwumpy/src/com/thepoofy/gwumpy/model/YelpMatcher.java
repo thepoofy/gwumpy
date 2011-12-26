@@ -31,9 +31,13 @@ public class YelpMatcher
 		for(Business b : yelp)
 		{
 			int score = 0;
+			
 			score += comparePostalCode(b);
+			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
 			score += compareName(b);
+			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
 			score += compareAddress(b);
+			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
 			
 			if(score > bestScore)
 			{
@@ -43,14 +47,14 @@ public class YelpMatcher
 			}
 		}
 		
-//		if(bestBiz != null)
-//		{
-//			log.info(bestBiz.getName()+" : "+bestScore);
-//		}
-//		else
-//		{
-//			log.info("no match for "+v.getName());
-//		}
+		if(bestBiz != null)
+		{
+			log.info(bestBiz.getName()+" : "+bestScore);
+		}
+		else
+		{
+			log.info("no match for "+v.getName());
+		}
 		
 		return bestBiz;
 	}
@@ -100,7 +104,7 @@ public class YelpMatcher
 				&& b.getLocation().getAddress().size() > 0
 				&& b.getLocation().getAddress() != null)
 		{
-			return (v.getLocation().getAddress().equals(
+			return (v.getLocation().getAddress().equalsIgnoreCase(
 					b.getLocation().getAddress().get(0))? 20: -5);
 		}
 		

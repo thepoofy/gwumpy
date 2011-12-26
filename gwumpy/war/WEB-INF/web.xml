@@ -22,9 +22,15 @@
   </servlet>
   
   <servlet>
-    <servlet-name>BasicSearch</servlet-name>
+    <servlet-name>QASearch</servlet-name>
+    <servlet-class>com.thepoofy.gwumpy.servlet.GwumpyQASearch</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>YelpSearch</servlet-name>
     <servlet-class>com.thepoofy.gwumpy.servlet.YelpSearch</servlet-class>
   </servlet>
+  
   
   
   
@@ -44,10 +50,14 @@
   </servlet-mapping>
   
   <servlet-mapping>
-    <servlet-name>BasicSearch</servlet-name>
-    <url-pattern>/search</url-pattern>
+    <servlet-name>QASearch</servlet-name>
+    <url-pattern>/gwumpy/qasearch</url-pattern>
   </servlet-mapping>
   
+  <servlet-mapping>
+    <servlet-name>YelpSearch</servlet-name>
+    <url-pattern>/gwumpy/yelpsearch</url-pattern>
+  </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
