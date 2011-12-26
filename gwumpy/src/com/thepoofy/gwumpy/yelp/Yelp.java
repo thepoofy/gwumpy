@@ -62,17 +62,17 @@ public class Yelp
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	public YelpSearchResults search(double latitude, double longitude, int radius, String category, int offset) 
+	public YelpSearchResults search(double latitude, double longitude, int radius, String category, int page) 
 			throws JsonParseException, JsonMappingException, IOException {
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				"http://api.yelp.com/v2/search");
 		
-		request.addQuerystringParameter("sort", "1");
+		//request.addQuerystringParameter("sort", "1");
 		request.addQuerystringParameter("ll", latitude + "," + longitude);
 		request.addQuerystringParameter("radius_filter", ""+radius);
 		request.addQuerystringParameter("category_filter", category);
 		request.addQuerystringParameter("limit", ""+SEARCH_LIMIT);
-		request.addQuerystringParameter("offset", ""+offset);
+		request.addQuerystringParameter("offset", ""+(page*SEARCH_LIMIT));
 		
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();

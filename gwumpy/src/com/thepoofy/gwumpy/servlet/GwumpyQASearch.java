@@ -104,7 +104,7 @@ public class GwumpyQASearch extends VenueSearch<Map<String, Object>>
 		
 		if(response.getTotal() > Yelp.SEARCH_LIMIT)
 		{
-			YelpSearchResults response1 = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), Yelp.SEARCH_LIMIT);
+			YelpSearchResults response1 = yelpDao.search(loc.getLatitude(), loc.getLongitude(), radius, category.getYelpId(), 1);
 
 			bizList.addAll(response1.getBusinesses());
 		}
