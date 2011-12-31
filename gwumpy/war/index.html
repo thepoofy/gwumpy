@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  
+  <title>Gwumpy</title>
+  
   <link rel="stylesheet" href="assets/stylesheets/jquery.mobile-1.0.min.css" />
   <link rel="stylesheet" href="assets/stylesheets/jq-mobile-green-button-theme.css" />
   <link rel="stylesheet" href="assets/stylesheets/main.css" />
@@ -9,7 +15,15 @@
   <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/jquery.mobile-1.0.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
-  
+  <style>
+  	.categoryIcon{
+  		/*
+  		padding-top: 5px;
+  		padding-right: 10px;
+  		*/
+  		padding:10px;
+  	}
+  </style>
   <script>
 	var hasGeoLocation = false;
   
@@ -57,7 +71,7 @@
 	         {
 	        	$("#results_list").empty();
 	        	
-				if(data.status == 200 && data.data !== null && data.data.length > 0)
+				if(data.status === 200 && data.data !== null && data.data.length > 0)
 				{
 					$.each(data.data, function(i, venue) 
 					{
@@ -66,14 +80,15 @@
 	        	}
 	        	else
 	         	{
-	        		var list_data = '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow"><li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c"><h3 class="ui-li-heading">No data found.</h3></li></ul>';
+	        		var list_data = '<li><h3>No data found.</h3></li>';
 	        		$(list_data).appendTo("#results_list");
 	         	}
 				
-	           
 				$.mobile.changePage('#results', {
 					transition: 'slide'
 				});
+				
+				$('#results_list').listview('refresh');
 	         }
 	        });
       });
@@ -189,19 +204,55 @@
     
     function createListItem(venue)
     {
+    	var li = create('li');
+    	var anchor = create('a');
+    	anchor.attr('href','#details');
     	
-    	return '<ul data-json="" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">'+
-    		'<li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-top ui-btn-up-c">'+
-    			'<a href="#details" class="ui-link-inherit">'+
-    				'<h3 class="ui-li-heading">'+venue.name+' - '+venue.category+'</h3>'+
-    				'<p class="ui-li-desc"><strong>'+venue.address+'</strong></p>'+
-    				'<p class="ui-li-desc">People Here Now: '+venue.hereNowCount+'</p>'+
-    				'<p class="ui-li-desc"><strong>'+venue.distance+'</strong> meters</p>'+
-    			'</a>'+
-    		'</li>'+
-    	'</ul>';
+    	anchor.append(create('img')
+        		.attr('src',venue.categoryImgUrl)
+				.addClass('ui-li-thumb')
+				.addClass('categoryIcon')
+        	);
+    	
+    	var gridLayout = create('div');
+    	gridLayout.addClass('ui-grid-a');
+    	
+    	var leftCol = create('div').addClass('ui-block-a');
+    	var rightCol = create('div').addClass('ui-block-b');
+    	
+    	leftCol.append(create('h3')
+    		.text(venue.name+' - '+venue.category));
+    	leftCol.append(create('p')
+    		.text(venue.address));
+    	leftCol.append(create('p')
+           	.text('Here Now: '+venue.hereNowCount));
+    	leftCol.append(create('p')
+        	.text(venue.distance+' meters'));
+    	
+    	gridLayout.append(leftCol);
+    	
+    	
+    	
+    	gridLayout.append(rightCol);
+    	
+    	anchor.append(gridLayout);
+    	
+    	li.append(anchor);
+    	
+    	return li;
     }
 
+    function create(domType)
+    {
+    	return $(document.createElement(domType));
+    }
+    /*
+    function createText(text)
+    {
+    	return $(document.createTextNode(text));
+    }*/
+    
+    
     </script>
   </head>
   <body>
@@ -211,6 +262,7 @@
       </div>
       <div data-role="content">
         <center><img src="assets/stylesheets/images/grump.png"/></center>
+        <center><img src="https://playfoursquare.s3.amazonaws.com/press/logo/poweredByFoursquare_gray.png" /></center>
         <button id="btnInit" data-theme="g" disabled="disabled">I'm hungry!</button>
       </div>
     </div>
@@ -285,7 +337,8 @@
     </div>
     <div id="results" data-role="page">
       <div data-role="header"><a href="#homepage" data-rel="back" data-theme="a">Back</a><h1>Search Results</h1></div>
-      <div id="results_list" data-role="content">
+      <div data-role="content">
+      	<ul id="results_list" data-role="listview"></ul>
       </div>
     </div>
     <div id="details" data-role="page">
