@@ -59,7 +59,7 @@ public class VenueSummary
 		
 		Category cat = v.getCategories().get(0);
 		ImageDefinition imgDef = cat.getIcon();
-		String img = imgDef.getPrefix()+imgDef.getSizes().get(0)+imgDef.getName();
+		String img = imgDef.getPrefix()+imgDef.getSizes().get(2)+imgDef.getName();
 		vs.setCategory(cat.getShortName());
 		vs.setCategoryImgUrl(img);
 		
