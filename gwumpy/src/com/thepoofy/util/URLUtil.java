@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,40 +150,40 @@ public class URLUtil
 		return null;
 	}
 	
-//	public static String doPost(String address, List<KeyValuePair>params) 
-//	{
-//		try 
-//		{
-//			// Send data
-//			URL url = new URL(address);
-//			URLConnection conn = url.openConnection();
-//			conn.setDoOutput(true);
-//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
-//			outputStreamWriter.write(createParamString(params));
-//			outputStreamWriter.flush();
-//
-//			// Get the response
-//			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//			
-//			StringBuilder sb = new StringBuilder();
-//			
-//			while(br.ready())
-//			{
-//				sb.append(br.readLine());
-//			}
-//			
-//			outputStreamWriter.close();
-//			br.close();
-//			
-//			return sb.toString();
-//			
-//		} 
-//		catch (Exception e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	public static String doStandalonePost(String address, List<KeyValuePair>params) 
+	{
+		try 
+		{
+			// Send data
+			URL url = new URL(address);
+			URLConnection conn = url.openConnection();
+			conn.setDoOutput(true);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+			outputStreamWriter.write(createParamString(params));
+			outputStreamWriter.flush();
+
+			// Get the response
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			StringBuilder sb = new StringBuilder();
+			
+			while(br.ready())
+			{
+				sb.append(br.readLine());
+			}
+			
+			outputStreamWriter.close();
+			br.close();
+			
+			return sb.toString();
+			
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public static String doGet(String address, List<KeyValuePair>params) {
 		try {

@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.ObjectifyService;
+import com.thepoofy.gwumpy.servlet.ServletBase;
 import com.thepoofy.util.URLUtil;
 import com.williamvanderhoef.foursquare.model.Venue;
 
@@ -63,6 +67,43 @@ public class NycInspectionApi
 		
 		return null;
 		
+	}
+	
+	static{
+		ObjectifyService.register(NycInspectionGrade.class);
+	}
+	
+	private static final Logger log = Logger.getLogger(NycInspectionApi.class.getName());
+	
+	public static void saveGrade(NycInspectionGrade grade)
+	{
+		Objectify ofy = ObjectifyService.begin();
+
+		NycInspectionGrade latestGrade = ofy.query(NycInspectionGrade.class).filter("camis", grade.camis).order("inspectionDate").limit(1).get();
+		
+		if(latestGrade == null)
+		{
+			ofy.put(grade);
+			log.info("Inserted grade for "+grade.getDba()+" is "+grade.getCurrentGrade()+" on "+grade.getInspectionDate());
+		}
+		else
+		{
+			log.info("No action taken for "+grade.getDba());
+		}
+		
+		assert grade.id != null;
+		
+		
+//		
+//		System.out.println("Inserted grade for "+grade.getDba()+" is "+grade.getCurrentGrade()+" on "+grade.getInspectionDate());
+//		if(latestGrade != null)
+//		{
+//			System.out.println("Latest grade for "+latestGrade.getDba()+" is "+latestGrade.getCurrentGrade()+" on "+latestGrade.getInspectionDate());
+//		}
+//		else
+//		{
+//			System.out.println("Unable to fetch data.");
+//		}
 	}
 	
 }

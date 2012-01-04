@@ -1,0 +1,11 @@
+<!-- Indices written at Wed, 4 Jan 2012 07:00:28 UTC -->
+
+<datastore-indexes>
+
+    <!-- Used 101 times in query history -->
+    <datastore-index kind="NycInspectionGrade" ancestor="false" source="auto">
+        <property name="camis" direction="asc"/>
+        <property name="inspectionDate" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
