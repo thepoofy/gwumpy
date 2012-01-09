@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.http.auth.InvalidCredentialsException;
 
 import com.thepoofy.constants.Constants;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 import com.williamvanderhoef.foursquare.model.subtypes.Results;
 import com.williamvanderhoef.foursquare.responses.VenueLinksResponse;
 import com.williamvanderhoef.foursquare.responses.VenueResponse;
@@ -29,6 +29,16 @@ public class VenuesDao
 	public VenuesDao(String accessToken)
 	{
 		dao = new FoursquareDao("venues", accessToken);
+	}
+	
+	/**
+	 * Used for making Userless requests against the foursquare venues api.
+	 * 
+	 * @param accessToken
+	 */
+	public VenuesDao()
+	{
+		dao = new FoursquareDao("venues", null);
 	}
 	
 	/**
@@ -58,6 +68,11 @@ public class VenuesDao
 		{
 			return new VenueResponse();
 		}
+	}
+	
+	public VenueSearchResponse match(Location loc, String query) throws IOException, InvalidCredentialsException, Exception
+	{
+		return search(loc, null,  query, null, "match", null);
 	}
 	
 	public VenueSearchResponse browse(Location loc, Integer radius, String category) throws IOException, InvalidCredentialsException, Exception
@@ -90,7 +105,11 @@ public class VenuesDao
 		if(loc != null)
 		{
 			params.put("ll", ""+loc.getLatitude()+","+loc.getLongitude());
-			params.put("llAcc", ""+loc.getAccuracy());
+			
+			if(loc.getAccuracy() != null)
+			{
+				params.put("llAcc", ""+loc.getAccuracy());
+			}
 		}
 		else
 		{

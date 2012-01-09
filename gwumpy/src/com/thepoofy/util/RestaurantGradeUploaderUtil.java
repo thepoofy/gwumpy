@@ -10,68 +10,59 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.thepoofy.gwumpy.nyc.NycInspectionGrade;
+import com.thepoofy.gwumpy.model.NycInspectionGrade;
 
 public class RestaurantGradeUploaderUtil {
 
-//	private static final String ADDRESS = "http://127.0.0.1:8888/RestaurantGradeUpload";
-	private static final String ADDRESS = "http://gwumpymobile.appspot.com/RestaurantGradeUpload";
+//	private static final String GRADES_FILE = "C:\\allGrades.txt";
+	private static final String GRADES_FILE = "C:\\testGrades.txt";
+	
+	
+	private static final String ADDRESS = "http://127.0.0.1:8888/RestaurantGradeUpload";
+//	private static final String ADDRESS = "http://gwumpymobile.appspot.com/RestaurantGradeUpload";
 	private static int uploadCounter = 0;
 	
 	
 	public static void main(String [] args)
 	{
-		Map<String, NycInspectionGrade> gradeMap = new HashMap<String, NycInspectionGrade>();
-		Map<String, String> csvMap = new HashMap<String, String>();
 		
+		final Map<String, NycInspectionGrade> gradeMap;
 		try
 		{
-			BufferedReader reader = new BufferedReader(new FileReader("C:\\allGrades.txt"));
-			if(reader.ready())
-			{
-				reader.readLine();
-			}
-			
-			
-			
-			while(reader.ready())
-			{
-				String csvRecord = reader.readLine();
-				
-				NycInspectionGrade grade = fromCsv(csvRecord);
-				
-				if(isBetter(gradeMap, grade))
-				{
-					csvMap.put(grade.getCamis(), csvRecord);
-				}	
-			}
+			gradeMap = loadGradesCsv();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace(System.err);
-			
+			e.printStackTrace();
 			return;
 		}
 		
-		Set<Map.Entry<String, String>> entries = csvMap.entrySet();
+		Set<Map.Entry<String, NycInspectionGrade>> entries = gradeMap.entrySet();
 		
 		System.out.println("Found "+entries.size());
 		
 		try
 		{
-			for(Map.Entry<String, String> entry: entries)
+			for(Map.Entry<String, NycInspectionGrade> entry: entries)
 			{
-
-				if(uploadCounter >= 2813)
-				{
-					upload(entry.getValue());
-				}
-				else
-				{
-					uploadCounter++;
-				}
+				List<NycInspectionGrade> grades = new ArrayList<NycInspectionGrade>();
+				grades.add(entry.getValue());
+				
+				upload(grades);
+				
+//				if(uploadCounter < 20)
+//				{
+//					upload(grades);
+//				}
+//				else
+//				{
+//					uploadCounter++;
+//					return;
+//				}
 					
 			}
 		}
@@ -83,11 +74,13 @@ public class RestaurantGradeUploaderUtil {
 	}
 	
 	
-	private static void upload(String csvRecord)throws Exception, InterruptedException
+	private static void upload(List<NycInspectionGrade> grades)throws Exception, InterruptedException
 	{
 		List<KeyValuePair> params = new ArrayList<KeyValuePair>();
 		
-		params.add(new KeyValuePair("inspection", csvRecord));
+		ObjectMapper mapper = new ObjectMapper();
+		
+		params.add(new KeyValuePair("inspection", mapper.writeValueAsString(grades)));
 		
 		String response = URLUtil.doStandalonePost(ADDRESS, params);
 		
@@ -96,7 +89,6 @@ public class RestaurantGradeUploaderUtil {
 			throw new Exception("Failed to upload.");
 		}
 		
-//		System.out.println(response);
 		System.out.println("Finished: "+uploadCounter++);
 		
 //		Thread.sleep(500);
@@ -114,14 +106,12 @@ public class RestaurantGradeUploaderUtil {
 		NycInspectionGrade prevGrade = gradeMap.get(grade.getCamis());
 		if(prevGrade == null)
 		{
-			gradeMap.put(grade.getCamis(), grade);
 			
 			return true;
 		}
 		
 		if(prevGrade.getInspectionDate().before(grade.getInspectionDate()))
 		{
-			gradeMap.put(grade.getCamis(), grade);
 			
 			return true;
 		}
@@ -156,16 +146,43 @@ public class RestaurantGradeUploaderUtil {
 			grade.setZipCode(nextLine[i++]);
 			grade.setPhone(nextLine[i++]);
 			grade.setCuisineCode(nextLine[i++]);
-			grade.setInspectionDate(nextLine[i++]);
+			grade.setInspectionDateString(nextLine[i++]);
 			grade.setAction(nextLine[i++]);
 			grade.setViolationCode(nextLine[i++]);
-			grade.setScore(nextLine[i++]);
+			grade.setScoreString(nextLine[i++]);
 			grade.setCurrentGrade(nextLine[i++]);
-			grade.setGradeDate(nextLine[i++]);
-			grade.setRecordDate(nextLine[i++]);
+			grade.setGradeDateString(nextLine[i++]);
+			grade.setRecordDateString(nextLine[i++]);
 		}
 		
 		return grade;
 		
+	}
+	
+	
+	public static Map<String, NycInspectionGrade> loadGradesCsv() throws Exception
+	{
+		Map<String, NycInspectionGrade> gradeMap = new HashMap<String, NycInspectionGrade>();
+		
+		BufferedReader reader = new BufferedReader(new FileReader(GRADES_FILE));
+		if(reader.ready())
+		{
+			reader.readLine();
+		}
+		
+		
+		while(reader.ready())
+		{
+			String csvRecord = reader.readLine();
+			
+			NycInspectionGrade grade = fromCsv(csvRecord);
+			
+			if(isBetter(gradeMap, grade))
+			{
+				gradeMap.put(grade.getCamis(), grade);
+			}
+		}
+		
+		return gradeMap;
 	}
 }

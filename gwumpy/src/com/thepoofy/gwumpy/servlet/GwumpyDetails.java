@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
+import com.thepoofy.gwumpy.dao.GwumpyVenueLinkApi;
+import com.thepoofy.gwumpy.model.NycInspectionGrade;
 import com.thepoofy.gwumpy.model.VenueSummary;
 import com.thepoofy.gwumpy.nyc.NycInspectionApi;
 import com.williamvanderhoef.foursquare.model.VenueDetails;
@@ -24,6 +26,13 @@ import com.williamvanderhoef.foursquare.responses.VenueResponse;
 @SuppressWarnings("serial")
 public class GwumpyDetails extends ServletBase
 {
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws ServletException
+	 */
 	private void handleResponse(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException
 	{
 		try
@@ -38,9 +47,11 @@ public class GwumpyDetails extends ServletBase
 			VenueSummary vs = VenueSummary.valueOf(vd);
 			
 			
-			NycInspectionApi nycApi = new NycInspectionApi();
-			String restaurantGrade = nycApi.findGrade(vd);
-			vs.setHealthCodeRating(restaurantGrade);
+			
+			NycInspectionGrade restaurantGrade = GwumpyVenueLinkApi.findGrade(vd);
+			
+			
+			vs.setHealthCodeRating(restaurantGrade.getCurrentGrade()+"("+restaurantGrade.getScore()+"*)");
 			
 			
 			VenueLinksResponse linksResponse = dao.links(fsqId);

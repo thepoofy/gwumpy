@@ -1,4 +1,4 @@
-package com.thepoofy.gwumpy.nyc;
+package com.thepoofy.gwumpy.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,26 +7,33 @@ import javax.persistence.Id;
 
 import com.googlecode.objectify.annotation.Unindexed;
 
+/**
+ * 
+ * @author William Vanderhoef william.vanderhoef@gmail.com
+ *
+ */
 public class NycInspectionGrade {
 	//"CAMIS","DBA","BORO","BUILDING","STREET","ZIPCODE","PHONE","CUISINECODE","INSPDATE","ACTION","VIOLCODE","SCORE","CURRENTGRADE","GRADEDATE","RECORDDATE"
 	
-	@Id Long id;	//datastore assigned unique id
+	private @Id String camis;
+	private String dba;
+	private @Unindexed String boro;
+	private String building;
+	private String street;
+	private String zipCode;
+	private String phone;
+	private @Unindexed String cuisineCode;
+	private Date inspectionDate;
+	private @Unindexed String action;
+	private @Unindexed String violationCode;
+	private @Unindexed Integer score;
+	private String currentGrade;
+	private @Unindexed Date gradeDate;
+	private @Unindexed Date recordDate;
 	
-	String camis;
-	String dba;
-	@Unindexed String boro;
-	String building;
-	String street;
-	String zipCode;
-	String phone;
-	@Unindexed String cuisineCode;
-	Date inspectionDate;
-	@Unindexed String action;
-	@Unindexed String violationCode;
-	@Unindexed Integer score;
-	String currentGrade;
-	@Unindexed Date gradeDate;
-	@Unindexed Date recordDate;
+	private Double latitude;
+	private Double longitude;
+		
 	
 	/**
 	 * @return the camis
@@ -154,7 +161,7 @@ public class NycInspectionGrade {
 	/**
 	 * @param inspectionDate
 	 */
-	public void setInspectionDate(String inspectionDate) {
+	public void setInspectionDateString(String inspectionDate) {
 		
 		try
 		{
@@ -204,7 +211,7 @@ public class NycInspectionGrade {
 		this.score = score;
 	}
 	
-	public void setScore(String score)
+	public void setScoreString(String score)
 	{
 		try
 		{
@@ -244,7 +251,7 @@ public class NycInspectionGrade {
 	/**
 	 * @param gradeDate
 	 */
-	public void setGradeDate(String gradeDate)
+	public void setGradeDateString(String gradeDate)
 	{
 		try
 		{
@@ -273,7 +280,7 @@ public class NycInspectionGrade {
 	/**
 	 * @param recordDate
 	 */
-	public void setRecordDate(String recordDate) {
+	public void setRecordDateString(String recordDate) {
 		try
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -284,6 +291,28 @@ public class NycInspectionGrade {
 			this.recordDate = null;
 		}	
 	}
-	
-	
+	/**
+	 * @return the latitude
+	 */
+	public Double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+	/**
+	 * @return the longitude
+	 */
+	public Double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
 }

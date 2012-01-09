@@ -117,7 +117,10 @@ public class URLUtil
 			HTTPRequest request = new HTTPRequest(new URL(uri), method);
 			request.setHeader(new HTTPHeader("User-Agent", "gwumpy.com beta"));
 			
+			request.getFetchOptions().setDeadline(10.0);
+			
 			HTTPResponse res = fetcher.fetch(request);
+			
 			
 //			Future<HTTPResponse> future = fetcher.fetchAsync(request);
 //			future.
@@ -185,29 +188,47 @@ public class URLUtil
 		return null;
 	}
 	
+	
 	public static String doGet(String address, List<KeyValuePair>params) {
-		try {
-			
+		try 
+		{
 			return loadPage(address+"?"+createParamString(params), HTTPMethod.GET);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param address
+	 * @param params
+	 * @return
+	 */
+	public static String doStandaloneGet(String address, List<KeyValuePair>params) 
+	{
+		try
+		{
+			// Send data
+			URL url = new URL(address+"?"+createParamString(params));
+			System.out.println(url.toExternalForm());
+			URLConnection conn = url.openConnection();
+
+			// Get the response
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
-//			// Send data
-//			URL url = new URL(address+"?"+data.toString());
-//			System.out.println(url.toExternalForm());
-//			URLConnection conn = url.openConnection();
-//
-//			// Get the response
-//			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//			
-//			StringBuilder sb = new StringBuilder();
-//			
-//			while(br.ready())
-//			{
-//				sb.append(br.readLine());
-//			}
-//			
-//			br.close();
-//			
-//			return sb.toString();
+			StringBuilder sb = new StringBuilder();
+			
+			while(br.ready())
+			{
+				sb.append(br.readLine());
+			}
+			
+			br.close();
+			
+			return sb.toString();
 			
 		} 
 		catch (Exception e) 

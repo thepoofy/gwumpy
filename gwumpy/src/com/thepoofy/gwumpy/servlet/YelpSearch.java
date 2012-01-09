@@ -14,7 +14,7 @@ import com.thepoofy.constants.VenueCategoryEnum;
 import com.thepoofy.gwumpy.yelp.Yelp;
 import com.thepoofy.gwumpy.yelp.model.Business;
 import com.thepoofy.gwumpy.yelp.model.YelpSearchResults;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 
 /**
  * @author Willum

@@ -1,31 +1,35 @@
 /**
  * 
  */
-package com.thepoofy.gwumpy.servlet;
+package com.thepoofy.gwumpy.servlet.tasks;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import com.thepoofy.gwumpy.dao.DatastoreObjectNotFoundException;
+import com.thepoofy.gwumpy.geocoder.GeoApi;
 import com.thepoofy.gwumpy.model.NycInspectionGrade;
 import com.thepoofy.gwumpy.nyc.NycInspectionApi;
+import com.thepoofy.gwumpy.servlet.ServletBase;
+import com.thepoofy.util.location.Location;
 
 /**
  * @author Willum
  *
  */
 @SuppressWarnings("serial")
-public class NycRestaurantUpload extends ServletBase
+public class UpdateNycGradeLocationTask extends ServletBase
 {
+	private static final Logger log = Logger.getLogger(UpdateNycGradeLocationTask.class.getName());
+	
+	
 	/**
 	 * @param request
 	 * @param response
@@ -36,28 +40,33 @@ public class NycRestaurantUpload extends ServletBase
 	{
 		try
 		{
-			String inspectionRecord = getParameter(request, "inspection", false);
+			String inspectionRecord = getParameter(request, "camis", false);
 			
-			ObjectMapper mapper = new ObjectMapper();
-			
-			TypeReference<List<NycInspectionGrade>> typeRef = new TypeReference<List<NycInspectionGrade>>() {}; 
-	               
-			List<NycInspectionGrade> grades = mapper.readValue(inspectionRecord, typeRef);
-			
-			if(grades != null)
+			try
 			{
-				for(NycInspectionGrade grade : grades)
+				NycInspectionGrade grade = NycInspectionApi.findGrade(inspectionRecord);
+				
+				Location loc = GeoApi.geocode(grade);
+				
+	
+				if(loc != null)
 				{
-					NycInspectionApi.saveGrade(grade);
+					NycInspectionApi.updateLocation(grade, loc);
 					
-					//queue up the task to update the lat/lng info.
 					Queue queue = QueueFactory.getDefaultQueue();
-					queue.add(TaskOptions.Builder.withUrl("/tasks/updateNycGradeLocation").param("camis", grade.getCamis()));
-					
+					queue.add(TaskOptions.Builder.withUrl("/tasks/updateNycGradeVenueId").param("camis", grade.getCamis()));
+				}
+				else
+				{
+					log.warning("No location info available for "+grade.getDba()+" : "+grade.getCamis());
 				}
 			}
+			catch(DatastoreObjectNotFoundException e)
+			{
+				e.printStackTrace();
+			}
 			
-			doResponse(grades, response);
+			doResponse(null, response);
 		}
 		catch(Throwable t)
 		{

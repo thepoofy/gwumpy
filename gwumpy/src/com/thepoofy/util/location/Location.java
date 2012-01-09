@@ -1,10 +1,17 @@
-package com.thepoofy.util;
+package com.thepoofy.util.location;
 
 public class Location
 {
 	private Double latitude;
 	private Double longitude;
 	private Integer accuracy;
+	
+	public Location(){}
+	
+	public Location(Double lat, Double lng){
+		latitude = new Double(lat);
+		longitude = new Double(lng);
+	}
 	
 	/**
 	 * @return the accuracy

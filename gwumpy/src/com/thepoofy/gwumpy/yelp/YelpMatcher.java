@@ -1,4 +1,4 @@
-package com.thepoofy.gwumpy.model;
+package com.thepoofy.gwumpy.yelp;
 
 import java.util.List;
 import java.util.logging.Logger;

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.thepoofy.constants.VenueCategoryEnum;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 
 /**
  * @author Willum

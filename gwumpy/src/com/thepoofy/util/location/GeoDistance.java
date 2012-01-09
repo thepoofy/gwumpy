@@ -1,4 +1,4 @@
-package com.thepoofy.util;
+package com.thepoofy.util.location;
 
 import com.williamvanderhoef.foursquare.model.Venue;
 

@@ -23,7 +23,7 @@ public class ServletBase extends HttpServlet
 	private static final Logger log = Logger.getLogger(ServletBase.class.getName());
 	
 	
-	static void doResponse(Object o, HttpServletResponse response)
+	protected static void doResponse(Object o, HttpServletResponse response)
 	{
 		try
 		{
@@ -34,7 +34,7 @@ public class ServletBase extends HttpServlet
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.writeValue(response.getWriter(), results);
 			
-			log.info(mapper.writeValueAsString(o));
+//			log.info(mapper.writeValueAsString(o));
 			
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("application/json");
@@ -49,7 +49,7 @@ public class ServletBase extends HttpServlet
 		}
 	}
 	
-	static void doError(Throwable t, HttpServletResponse response)
+	protected static void doError(Throwable t, HttpServletResponse response)
 	{
 		log.log(Level.SEVERE, t.getClass().getName(), t);
 		t.printStackTrace();
@@ -77,7 +77,7 @@ public class ServletBase extends HttpServlet
 		
 	}
 	
-	static Integer getParameterInteger(HttpServletRequest req, String param, boolean isRequired) throws Exception
+	protected static Integer getParameterInteger(HttpServletRequest req, String param, boolean isRequired) throws Exception
 	{
 		String res = getParameter(req, param, isRequired);
 		
@@ -93,7 +93,7 @@ public class ServletBase extends HttpServlet
 		}
 	}
 	
-	static Double getParameterDouble(HttpServletRequest req, String param, boolean isRequired)
+	protected static Double getParameterDouble(HttpServletRequest req, String param, boolean isRequired)
 	{
 		String res = getParameter(req, param, isRequired);
 		
@@ -109,7 +109,7 @@ public class ServletBase extends HttpServlet
 		}
 	}
 	
-	static String getParameter(HttpServletRequest req, String param, boolean isRequired)
+	protected static String getParameter(HttpServletRequest req, String param, boolean isRequired)
 	{
 		String res = req.getParameter(param);
 		

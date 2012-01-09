@@ -15,11 +15,11 @@ import javax.servlet.ServletException;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
 import com.thepoofy.constants.VenueCategoryEnum;
-import com.thepoofy.gwumpy.model.YelpMatcher;
 import com.thepoofy.gwumpy.yelp.Yelp;
+import com.thepoofy.gwumpy.yelp.YelpMatcher;
 import com.thepoofy.gwumpy.yelp.model.Business;
 import com.thepoofy.gwumpy.yelp.model.YelpSearchResults;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 import com.williamvanderhoef.foursquare.model.Venue;
 import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 

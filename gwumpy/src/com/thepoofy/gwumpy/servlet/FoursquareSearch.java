@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
 import com.thepoofy.constants.VenueCategoryEnum;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 import com.williamvanderhoef.foursquare.model.Venue;
 import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 

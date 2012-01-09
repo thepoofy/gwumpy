@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.thepoofy.ca.dao.foursquare.VenuesDao;
 import com.thepoofy.constants.VenueCategoryEnum;
 import com.thepoofy.gwumpy.model.VenueSummary;
-import com.thepoofy.util.Location;
+import com.thepoofy.util.location.Location;
 import com.williamvanderhoef.foursquare.responses.VenueSearchResponse;
 
 /**

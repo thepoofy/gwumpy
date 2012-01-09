@@ -1,4 +1,4 @@
-package com.thepoofy.util;
+package com.thepoofy.util.location;
 
 public class ImperialDistance implements Distance
 {
