@@ -53,7 +53,6 @@ public class GwumpySearch extends ServletBase
 			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
 			
 			
-			
 			doResponse(venues, response);
 		}
 		catch(Throwable t)

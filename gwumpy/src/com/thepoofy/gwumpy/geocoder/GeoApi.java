@@ -66,7 +66,7 @@ public class GeoApi {
 		}
 		else if(resultSet.found == 0)
 		{
-			throw new GeoApiException("No results found");
+			return null;
 		}
 		
 		

@@ -3,6 +3,8 @@ package com.thepoofy.gwumpy.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thepoofy.gwumpy.dao.DatastoreObjectNotFoundException;
+import com.thepoofy.gwumpy.dao.GwumpyVenueLinkApi;
 import com.thepoofy.gwumpy.yelp.model.Business;
 import com.williamvanderhoef.foursquare.model.ImageDefinition;
 import com.williamvanderhoef.foursquare.model.Venue;
@@ -43,6 +45,8 @@ public class VenueSummary
 	
 	//health code rating
 	private String healthCodeRating;
+	private Integer healthCodeViolations;
+	
 	
 	public static VenueSummary valueOf(Venue v)
 	{
@@ -279,7 +283,20 @@ public class VenueSummary
 		
 		for(Venue v : vsr.getVenues())
 		{
-			venues.add(valueOf(v));
+			VenueSummary vs = valueOf(v);
+			
+			try
+			{
+				NycInspectionGrade grade = GwumpyVenueLinkApi.findGrade(v);
+				vs.setHealthCodeRating(grade.getCurrentGrade());
+				vs.setHealthCodeViolations(grade.getScore());
+			}
+			catch(DatastoreObjectNotFoundException e)
+			{
+				//ignore this
+			}
+			
+			venues.add(vs);
 		}
 		
 		return venues;
@@ -319,6 +336,20 @@ public class VenueSummary
 	public void setNumRatings(Integer numRatings)
 	{
 		this.numRatings = numRatings;
+	}
+
+	/**
+	 * @return the healthCodeViolations
+	 */
+	public Integer getHealthCodeViolations() {
+		return healthCodeViolations;
+	}
+
+	/**
+	 * @param healthCodeViolations the healthCodeViolations to set
+	 */
+	public void setHealthCodeViolations(Integer healthCodeViolations) {
+		this.healthCodeViolations = healthCodeViolations;
 	}
 	
 }

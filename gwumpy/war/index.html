@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/stylesheets/jquery.mobile-1.0.min.css" />
   <link rel="stylesheet" href="assets/stylesheets/jq-mobile-green-button-theme.css" />
   <link rel="stylesheet" href="assets/stylesheets/main.css" />
-  <link rel="shortcut icon" href="assets/stylesheets/images/twitter-grump.png" />
+  <link rel="shortcut icon" href="assets/stylesheets/images/twitter-gwumpy.png" />
   <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/jquery.mobile-1.0.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
@@ -215,10 +215,11 @@
         	);
     	
     	var gridLayout = create('div');
-    	gridLayout.addClass('ui-grid-a');
+    	//gridLayout.addClass('ui-grid-a');
     	
-    	var leftCol = create('div').addClass('ui-block-a');
-    	var rightCol = create('div').addClass('ui-block-b');
+    	var leftCol = create('div');
+    		//.addClass('ui-block-a');
+    	//var rightCol = create('div').addClass('ui-block-b');
     	
     	leftCol.append(create('h3')
     		.text(venue.name+' - '+venue.category));
@@ -228,12 +229,19 @@
            	.text('Here Now: '+venue.hereNowCount));
     	leftCol.append(create('p')
         	.text(venue.distance+' meters'));
+    	if(venue.healthCodeRating)
+    	{
+    		leftCol.append(create('p')
+                .text('Health Code Rating: '+venue.healthCodeRating));	
+    		leftCol.append(create('p')
+                    .text('Violations: '+venue.healthCodeViolations));
+    	}
     	
     	gridLayout.append(leftCol);
     	
     	
     	
-    	gridLayout.append(rightCol);
+    	//gridLayout.append(rightCol);
     	
     	anchor.append(gridLayout);
     	
@@ -258,11 +266,10 @@
   <body>
     <div id="splash" data-role="page">
       <div data-role="header">
-        <h1>Gwumpy</h1>
-        <img src="https://playfoursquare.s3.amazonaws.com/press/logo/poweredByFoursquare_36x36.png" />
+        <h1>Gwumpy [beta]</h1>
       </div>
       <div data-role="content">
-        <center><img src="assets/stylesheets/images/grump.png"/></center>
+        <center><img src="assets/stylesheets/images/gwumpy.png"/></center>
         
         <button id="btnInit" data-theme="g" disabled="disabled">I'm hungry!</button>
       </div>
@@ -270,7 +277,7 @@
     <div id="homepage" data-role="page">
       <div data-role="header">
         <a href="#splash" data-rel="back" data-theme="a">Back</a>
-        <h1>Gwumpy</h1>
+        <h1>Gwumpy [beta]</h1>
       </div>
       <div data-role="content">
         <form name="search_form" id="search_form">
@@ -285,6 +292,7 @@
             <option value="pizza">Pizza</option>
             <option value="thai">Thai</option>
           </select>
+          <!-- 
           <label for="price" class="select">I'm Willing to Spend:</label>
           <select data-theme="d" name="price">
             <option value="4">As much as I need to</option>
@@ -298,6 +306,7 @@
             <option value="2">Some dirt is ok</option>
             <option value="1">I'll take my chances</option>
           </select>
+           -->
           <input id="latitude" type="hidden" name="lat" value="" />                                                                    
           <input id="longitude" type="hidden" name="lng" value="" />
           <input id="accuracy" type="hidden" name="llAcc" value="" />
@@ -306,7 +315,7 @@
         </form>
       </div>
       <div data-role="footer">
-        <h1>&copy; 2011 The Gwumpy Team</h1>
+        <h3><img style="width:300px" src="/assets/stylesheets/images/poweredByFoursquare_white.png" alt="Powered By Foursquare"/></h3>
       </div>
     </div>
     <div id="onError" data-role="page">
