@@ -2,13 +2,16 @@ package com.thepoofy.gwumpy.model;
 
 import javax.persistence.Id;
 
+import com.googlecode.objectify.annotation.Unindexed;
+import com.googlecode.objectify.condition.IfNull;
+
 public class GwumpyVenueIdLink {
 	
 	private @Id String foursquareId;
 	
-	private String nycInspectionGradeId;
+	private @Unindexed(IfNull.class)String nycInspectionGradeId;
 	
-	private String yelpId;
+	private @Unindexed(IfNull.class)String yelpId;
 	
 	
 	/**

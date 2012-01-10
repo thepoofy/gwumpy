@@ -45,10 +45,10 @@ public class UpdateNycGradeLocationTask extends ServletBase
 			try
 			{
 				NycInspectionGrade grade = NycInspectionApi.findGrade(inspectionRecord);
-				
+
 				Location loc = GeoApi.geocode(grade);
 				
-	
+				
 				if(loc != null)
 				{
 					NycInspectionApi.updateLocation(grade, loc);

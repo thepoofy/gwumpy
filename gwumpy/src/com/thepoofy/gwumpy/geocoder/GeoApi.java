@@ -20,7 +20,7 @@ public class GeoApi {
 	 * @param grade
 	 * @return
 	 */
-	public static Location geocode(NycInspectionGrade grade) throws Exception
+	public static Location geocode(NycInspectionGrade grade) throws GeoApiException
 	{
 		List<KeyValuePair> params = new ArrayList<KeyValuePair>();
 		
@@ -30,7 +30,7 @@ public class GeoApi {
 		String response = URLUtil.doStandaloneGet(ENDPOINT, params);
 		if(response == null)
 		{
-			throw new Exception("Response is null");
+			throw new GeoApiException("Response is null");
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -47,26 +47,26 @@ public class GeoApi {
 			System.err.println(response);
 			e.printStackTrace();
 			
-			throw new Exception("Response couldn't be parsed");
+			throw new GeoApiException("Response couldn't be parsed for "+grade.getCamis());
 		}
 		
 		if(results == null)
 		{
-			throw new Exception("Response couldn't be parsed");
+			throw new GeoApiException("Response was null");
 		}
 		
 		YResultSet resultSet = results.resultSet;
 		if(resultSet.error != 0)
 		{
-			throw new Exception(results.resultSet.errorMessage);
+			throw new GeoApiException(results.resultSet.errorMessage);
 		}
 		else if(resultSet.error != 0)
 		{
-			throw new Exception("Results not of acceptable quality");
+			throw new GeoApiException("Results not of acceptable quality");
 		}
 		else if(resultSet.found == 0)
 		{
-			throw new Exception("No results found");
+			throw new GeoApiException("No results found");
 		}
 		
 		
@@ -215,6 +215,10 @@ public class GeoApi {
 		Double offsetlat;
 		Double offsetlon;
 		Integer radius;
+		String line1;
+		String line2;
+		String line3;
+		String line4;
 		/**
 		 * @return the quality
 		 */
@@ -286,6 +290,54 @@ public class GeoApi {
 		 */
 		public void setOffsetlon(Double offsetlon) {
 			this.offsetlon = offsetlon;
+		}
+		/**
+		 * @return the line1
+		 */
+		public String getLine1() {
+			return line1;
+		}
+		/**
+		 * @param line1 the line1 to set
+		 */
+		public void setLine1(String line1) {
+			this.line1 = line1;
+		}
+		/**
+		 * @return the line2
+		 */
+		public String getLine2() {
+			return line2;
+		}
+		/**
+		 * @param line2 the line2 to set
+		 */
+		public void setLine2(String line2) {
+			this.line2 = line2;
+		}
+		/**
+		 * @return the line3
+		 */
+		public String getLine3() {
+			return line3;
+		}
+		/**
+		 * @param line3 the line3 to set
+		 */
+		public void setLine3(String line3) {
+			this.line3 = line3;
+		}
+		/**
+		 * @return the line4
+		 */
+		public String getLine4() {
+			return line4;
+		}
+		/**
+		 * @param line4 the line4 to set
+		 */
+		public void setLine4(String line4) {
+			this.line4 = line4;
 		}
 	}
 }

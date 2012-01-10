@@ -18,18 +18,24 @@ import com.thepoofy.gwumpy.model.NycInspectionGrade;
 
 public class RestaurantGradeUploaderUtil {
 
-//	private static final String GRADES_FILE = "C:\\allGrades.txt";
-	private static final String GRADES_FILE = "C:\\testGrades.txt";
+	private static final String GRADES_FILE = "C:\\allGrades.txt";
+//	private static final String GRADES_FILE = "C:\\testGrades.txt";
 	
 	
-	private static final String ADDRESS = "http://127.0.0.1:8888/RestaurantGradeUpload";
-//	private static final String ADDRESS = "http://gwumpymobile.appspot.com/RestaurantGradeUpload";
+//	private static final String ADDRESS = "http://127.0.0.1:8888/RestaurantGradeUpload";
+	private static final String ADDRESS = "http://gwumpymobile.appspot.com/RestaurantGradeUpload";
 	private static int uploadCounter = 0;
 	
+	private static final int MINIMUM = 5000;
+	private static final int MAXIMUM = 14000;
 	
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main(String [] args)
 	{
-		
+		System.out.println("Starting uploader now...");
 		final Map<String, NycInspectionGrade> gradeMap;
 		try
 		{
@@ -52,18 +58,18 @@ public class RestaurantGradeUploaderUtil {
 				List<NycInspectionGrade> grades = new ArrayList<NycInspectionGrade>();
 				grades.add(entry.getValue());
 				
-				upload(grades);
-				
-//				if(uploadCounter < 20)
-//				{
-//					upload(grades);
-//				}
-//				else
-//				{
-//					uploadCounter++;
-//					return;
-//				}
-					
+				if(uploadCounter < MINIMUM)
+				{
+					uploadCounter++;
+				}
+				else if(uploadCounter >= MAXIMUM)
+				{
+					return;
+				}
+				else
+				{
+					upload(grades);
+				}	
 			}
 		}
 		catch(Exception e)
@@ -73,7 +79,12 @@ public class RestaurantGradeUploaderUtil {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @param grades
+	 * @throws Exception
+	 * @throws InterruptedException
+	 */
 	private static void upload(List<NycInspectionGrade> grades)throws Exception, InterruptedException
 	{
 		List<KeyValuePair> params = new ArrayList<KeyValuePair>();
@@ -95,7 +106,13 @@ public class RestaurantGradeUploaderUtil {
 	}
 	
 	
-	
+	/**
+	 * 
+	 * 
+	 * @param gradeMap
+	 * @param grade
+	 * @return
+	 */
 	private static boolean isBetter(Map<String, NycInspectionGrade> gradeMap, NycInspectionGrade grade)
 	{
 		if(grade.getCurrentGrade() == null || grade.getCurrentGrade().isEmpty())
@@ -119,7 +136,12 @@ public class RestaurantGradeUploaderUtil {
 		return false;
 	}
 	
-	
+	/**
+	 * 
+	 * @param inspectionRecord
+	 * @return
+	 * @throws IOException
+	 */
 	private static NycInspectionGrade fromCsv(String inspectionRecord) throws IOException
 	{
 		CSVReader reader = new CSVReader(new StringReader(inspectionRecord));

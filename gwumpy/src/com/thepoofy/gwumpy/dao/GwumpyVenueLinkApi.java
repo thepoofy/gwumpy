@@ -1,7 +1,7 @@
 package com.thepoofy.gwumpy.dao;
 
-import java.util.logging.Logger;
-
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.thepoofy.gwumpy.model.GwumpyVenueIdLink;
@@ -16,7 +16,7 @@ public class GwumpyVenueLinkApi
 		ObjectifyService.register(GwumpyVenueIdLink.class);
 	}
 	
-	private static final Logger log = Logger.getLogger(GwumpyVenueLinkApi.class.getName());
+//	private static final Logger log = Logger.getLogger(GwumpyVenueLinkApi.class.getName());
 	
 
 	/**
@@ -27,9 +27,14 @@ public class GwumpyVenueLinkApi
 	 */
 	public static GwumpyVenueIdLink findVenueLink(Venue v) throws DatastoreObjectNotFoundException
 	{
+		if(v == null)
+		{
+			throw new NullPointerException("Venue cannot be null.");
+		}
+		
 		Objectify ofy = ObjectifyService.begin();
 		
-		GwumpyVenueIdLink link = ofy.query(GwumpyVenueIdLink.class).filter("foursquareId", v.getId()).get();
+		GwumpyVenueIdLink link = lookup(ofy, v.getId());
 		
 		if(link == null){
 			throw new DatastoreObjectNotFoundException("No foursquare venue information found.");
@@ -96,20 +101,29 @@ public class GwumpyVenueLinkApi
 	 */
 	public static NycInspectionGrade findGrade(Venue v) throws DatastoreObjectNotFoundException
 	{
-		Objectify ofy = ObjectifyService.begin();
-		
-		if(v == null)
-		{
-			throw new NullPointerException("Venue cannot be null.");
-		}
-		
-		GwumpyVenueIdLink link = ofy.query(GwumpyVenueIdLink.class).filter("foursquareId", v.getId()).get();
-		
-		if(link == null){
-			throw new DatastoreObjectNotFoundException("No foursquare venue information found.");
-		}
+		GwumpyVenueIdLink link = findVenueLink(v);
 		
 		return NycInspectionApi.findGrade(link.getNycInspectionGradeId());
+	}
+	
+	
+	/**
+	 * The optimal way to get a GwumpyVenueIdLink
+	 * 
+	 * @param ofy
+	 * @param foursquareId
+	 * @return
+	 */
+	private static GwumpyVenueIdLink lookup(Objectify ofy, String foursquareId)
+	{
+		try
+		{
+			return ofy.get(new Key<GwumpyVenueIdLink>(GwumpyVenueIdLink.class, foursquareId));	
+		}
+		catch(NotFoundException e)
+		{
+			return null;
+		}
 	}
 //	
 //	

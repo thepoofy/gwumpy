@@ -2,6 +2,7 @@ application: gwumpymobile
 version: 1
 runtime: java
 
+
 handlers:
 - url: /gwumpy/search
   name: GwumpySearchServlet
