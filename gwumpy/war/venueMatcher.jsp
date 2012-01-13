@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="shortcut icon" href="assets/stylesheets/images/twitter-grump.png" />
+<link rel="shortcut icon" href="assets/stylesheets/images/twitter-gwumpy.png" />
 <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
 <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA8PcXaepll3qB9JajxXmUnT_G6UXWYgE4&sensor=true"></script>

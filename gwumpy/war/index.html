@@ -15,18 +15,13 @@
   <script type="text/javascript" src="assets/javascripts/jquery-1.6.4.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/jquery.mobile-1.0.min.js"></script>
   <script type="text/javascript" src="assets/javascripts/yqlgeo.js"></script>
-  <style>
-  	.categoryIcon{
-  		/*
-  		padding-top: 5px;
-  		padding-right: 10px;
-  		*/
-  		padding:10px;
-  	}
-  </style>
+  <script type="text/javascript" src="assets/javascripts/gwumpy.js"></script>
   <script>
 	var hasGeoLocation = false;
   
+	$('#splash').bind('pageshow', function(){
+		initiate_geolocation();
+	});
 	
   	$('#splash').live('pagecreate', function(event)
    	{
@@ -38,13 +33,13 @@
     		if(hasGeoLocation)
     		{
     			$.mobile.changePage('#homepage', {
-        			transition: 'flip'
+        			transition: 'slide'
         		});
     		}
     		else
     		{
 				$.mobile.changePage("#onError", {
-					transition: 'pop',
+					transition: 'slide',
 					
 				});
     		}
@@ -67,6 +62,15 @@
 	         url: "/gwumpy/search",
 	         data: form_data,
 	         dataType: 'json',
+	         beforeSend: function()
+	         {
+	        	 $.mobile.loadingMessage = "soo hungwy...";
+	        	 $.mobile.showPageLoadingMsg();
+	         },
+	         complete: function()
+	         {
+	        	 $.mobile.hidePageLoadingMsg();
+	         },
 	         success: function(data) 
 	         {
 	        	$("#results_list").empty();
@@ -93,93 +97,16 @@
 	        });
       });
     });
+    $('#homepage').bind('pageshow', function(){
+		initiate_geolocation();
+	});
     
     $('#details').live('pagecreate', function(event) {
     	
     });
-
-    function initiate_geolocation() {
-      if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(handle_geolocation_query, handle_errors, {timeout: 10000});
-      } else {
-        yqlgeo.get('visitor', normalize_yql_response);
-      }
-    }
     
-    function onGeoLocationEnabled()
-  	{
-    	//alert("success");
-    	hasGeoLocation = true;
-    	
-    	$('#btnInit').attr('disabled', false);
-    	try
-    	{
-    		$('#btnInit').button('enable');
-    	}
-    	catch(e){}
-    	
-		$('#search').attr('disabled', false);
-    	
-    	try
-    	{
-    		$('#search').button('enable');
-    	}
-    	catch(e){}
-  	}
 
-    function handle_errors(error) 
-    {
-    	//alert("fail");
-    	/*
-		switch(error.code) 
-		{
-	        case error.PERMISSION_DENIED:
-			  $.mobile.changePage("#onError", {
-	            transition: 'pop'
-	          });
-	        break;
-	        case error.POSITION_UNAVAILABLE:
-	          $.mobile.changePage("#onError", {
-	            transition: 'flip'
-	          });
-	        break;
-	        case error.TIMEOUT:
-	          $.mobile.changePage("#onError", {
-	            transition: 'flip'
-	          });
-	        break;
-	        default:
-	          $.mobile.changePage("#onError", {
-	            transition: 'flip'
-	          });
-	        break;
-		}
-    	*/
-    }
-
-    function normalize_yql_response(response) {
-      if (response.error) {
-        var error = { code : 0 };
-        handle_error(error);
-        return;
-      }
-
-		var position = {
-	        coords : {
-	          latitude: response.place.centroid.latitude,
-	          longitude: response.place.centroid.longitude,
-	          accuracy: response.place.centroid.accuracy
-	        },
-	        address : {
-	          city: response.place.locality2.content,
-	          region: response.place.admin1.content,
-	          country: response.place.country.content
-	        }
-		};
-
-		handle_geolocation_query(position);
-    }
-
+    
     function handle_geolocation_query(position) 
     {
 		onGeoLocationEnabled();
@@ -205,10 +132,12 @@
     function createListItem(venue)
     {
     	var li = create('li');
-    	var anchor = create('a');
-    	anchor.attr('href','#details');
+    	//var anchor = create('a');
+    	//anchor.attr('href','#details');
     	
-    	anchor.append(create('img')
+    	
+    	//anchor.append(create('img')
+		li.append(create('img')    			
         		.attr('src',venue.categoryImgUrl)
 				.addClass('ui-li-thumb')
 				.addClass('categoryIcon')
@@ -218,47 +147,54 @@
     	//gridLayout.addClass('ui-grid-a');
     	
     	var leftCol = create('div');
-    		//.addClass('ui-block-a');
-    	//var rightCol = create('div').addClass('ui-block-b');
-    	
+    	//leftCol.addClass('ui-block-a');
+    	/*
+    	var rightCol = create('div')
+    		.addClass('ui-block-b')
+    		.addClass('alignRight');
+    	*/
     	leftCol.append(create('h3')
-    		.text(venue.name+' - '+venue.category));
+    		//.addClass('venueName')
+    		.text(venue.name));//+' - '+venue.category));
     	leftCol.append(create('p')
-    		.text(venue.address));
+    		.text(venue.address+' ('+venue.distance+' meters)'));
     	leftCol.append(create('p')
-           	.text('Here Now: '+venue.hereNowCount));
-    	leftCol.append(create('p')
-        	.text(venue.distance+' meters'));
+           	.text('People Checked In: '+venue.hereNowCount));
+    	//leftCol.append(create('p')
+        //	.text(venue.distance+' meters'));
+    	
+    	
     	if(venue.healthCodeRating)
     	{
+    		//var rightCol = create('div').addClass('healthCode'); 
     		leftCol.append(create('p')
-                .text('Health Code Rating: '+venue.healthCodeRating));	
+                .text('Health Code Rating: ')
+                .append(create('strong').addClass('healthCode').text(venue.healthCodeRating)));	
     		leftCol.append(create('p')
-                    .text('Violations: '+venue.healthCodeViolations));
+                .text('Violations at last Inspection: ')
+                .append(create('strong').addClass('violations').text(venue.healthCodeViolations)));
+    		
+    		//gridLayout.append(rightCol);
     	}
+    	
     	
     	gridLayout.append(leftCol);
     	
     	
     	
+    	
+    	
+    	
     	//gridLayout.append(rightCol);
     	
-    	anchor.append(gridLayout);
-    	
-    	li.append(anchor);
+    	//anchor.append(gridLayout);
+    	li.append(gridLayout);
+    	//li.append(anchor);
     	
     	return li;
     }
 
-    function create(domType)
-    {
-    	return $(document.createElement(domType));
-    }
-    /*
-    function createText(text)
-    {
-    	return $(document.createTextNode(text));
-    }*/
+
     
     
     </script>
@@ -300,13 +236,14 @@
             <option value="2">A little bit</option>
             <option value="1">What I Found in My Pocket</option>
           </select>
-          <label for="standard" class="select">My Standards Are:</label>
+          -->
+          <label for="standard" class="select">How clean should my food be?</label>
           <select data-theme="d" name="standard">
-            <option value="3">Champagne Taste</option>
-            <option value="2">Some dirt is ok</option>
-            <option value="1">I'll take my chances</option>
+            <option value="3">Spotless</option>
+            <option value="2">A little floor salt</option>
+            <option value="1">Roaches are a delicacy</option>
           </select>
-           -->
+           
           <input id="latitude" type="hidden" name="lat" value="" />                                                                    
           <input id="longitude" type="hidden" name="lng" value="" />
           <input id="accuracy" type="hidden" name="llAcc" value="" />

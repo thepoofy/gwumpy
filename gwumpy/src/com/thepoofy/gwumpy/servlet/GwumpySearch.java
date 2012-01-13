@@ -4,6 +4,7 @@
 package com.thepoofy.gwumpy.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -31,17 +32,18 @@ public class GwumpySearch extends ServletBase
 			
 			Double lat = getParameterDouble(request, "lat", true);
 			Double lng = getParameterDouble(request, "lng", true); //Double.parseDouble(request.getParameter("lng"));
-			Integer llAcc = getParameterInteger(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
+			Double llAcc = getParameterDouble(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
 			String cat = getParameter(request, "category", false);
+			String standards = getParameter(request, "standard", false);
 			
 			Location loc = new Location();
 			loc.setLatitude(lat);
 			loc.setLongitude(lng);
 			if(llAcc == null)
 			{
-				llAcc = 100;
+				llAcc = 100.0;
 			}
-			loc.setAccuracy(llAcc);
+			loc.setAccuracy(Math.round(Math.round(llAcc)));
 			
 			Integer radius = 400;
 			
@@ -53,6 +55,10 @@ public class GwumpySearch extends ServletBase
 			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
 			
 			
+			venues = cleanupVenues(venues, standards);
+			
+			
+			
 			doResponse(venues, response);
 		}
 		catch(Throwable t)
@@ -62,6 +68,53 @@ public class GwumpySearch extends ServletBase
 		
 		
 	}
+	
+	/**
+	 * It's a pun. This method removes venues that have too many healthCodeViolations
+	 * 
+	 * @param venues
+	 * @param standards
+	 * @return
+	 */
+	private static List<VenueSummary> cleanupVenues(List<VenueSummary> venues, String standards)
+	{
+		log.info("Standards: "+standards);
+		
+		List<VenueSummary> cleanVenues = new ArrayList<VenueSummary>();
+		
+		if("3".equalsIgnoreCase(standards) || "2".equalsIgnoreCase(standards))
+		{
+			log.info("User has Standards: "+standards);
+				
+			for(VenueSummary vs : venues)
+			{
+				if(vs.getHealthCodeViolations() == null)
+				{
+					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+					
+					cleanVenues.add(vs);
+				}
+				else if("3".equalsIgnoreCase(standards) && vs.getHealthCodeViolations() < 7 )
+				{
+					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+					
+					cleanVenues.add(vs);
+				}
+				else if("2".equalsIgnoreCase(standards) && vs.getHealthCodeViolations() < 18)
+				{
+					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+					
+					cleanVenues.add(vs);
+				}
+			}
+		}
+		else{
+			return venues;
+		}
+		
+		return cleanVenues;
+	}
+	
 	
 	/*
 	 * (non-Javadoc)

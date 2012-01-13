@@ -288,7 +288,16 @@ public class VenueSummary
 			try
 			{
 				NycInspectionGrade grade = GwumpyVenueLinkApi.findGrade(v);
-				vs.setHealthCodeRating(grade.getCurrentGrade());
+				
+				if("Z".equalsIgnoreCase(grade.getCurrentGrade()))
+				{
+					vs.setHealthCodeRating("Pending");
+				}
+				else
+				{
+					vs.setHealthCodeRating(grade.getCurrentGrade());
+				}
+				
 				vs.setHealthCodeViolations(grade.getScore());
 			}
 			catch(DatastoreObjectNotFoundException e)

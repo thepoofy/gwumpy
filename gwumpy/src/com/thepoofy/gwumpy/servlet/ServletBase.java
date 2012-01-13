@@ -20,7 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 @SuppressWarnings("serial")
 public class ServletBase extends HttpServlet
 {
-	private static final Logger log = Logger.getLogger(ServletBase.class.getName());
+	protected static final Logger log = Logger.getLogger(ServletBase.class.getName());
 	
 	
 	protected static void doResponse(Object o, HttpServletResponse response)

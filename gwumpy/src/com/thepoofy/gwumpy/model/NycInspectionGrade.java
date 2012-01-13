@@ -208,7 +208,14 @@ public class NycInspectionGrade {
 	 * @param score the score to set
 	 */
 	public void setScore(Integer score) {
-		this.score = score;
+		if(score == null)
+		{
+			score = 0;
+		}
+		else
+		{
+			this.score = score;
+		}
 	}
 	
 	public void setScoreString(String score)
@@ -219,7 +226,7 @@ public class NycInspectionGrade {
 		}
 		catch(NumberFormatException nfe)
 		{
-			this.score = null;
+			this.score = 0;
 		}
 		
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.thepoofy.gwumpy.yelp.model.Business;
+import com.thepoofy.util.location.GeoDistance;
 import com.williamvanderhoef.foursquare.model.Venue;
 
 public class YelpMatcher
@@ -15,7 +16,6 @@ public class YelpMatcher
 	public YelpMatcher(Venue v)
 	{
 		this.v = v;
-		
 	}
 	
 	/**
@@ -37,6 +37,8 @@ public class YelpMatcher
 			score += compareName(b);
 			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
 			score += compareAddress(b);
+			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
+			score += compareGeolocation(b);
 			System.out.println(v.getName()+" - "+b.getName()+" : "+score);
 			
 			if(score > bestScore)
@@ -62,16 +64,15 @@ public class YelpMatcher
 	
 	private int comparePostalCode(Business b)
 	{
-		if (v.getLocation() != null 
-				&& v.getLocation().getPostalCode() != null
-				&& b.getLocation() != null
-				&& b.getLocation().getPostal_code() != null)
+		try
 		{
 			return (b.getLocation().getPostal_code().substring(0, 5).equals(
 					v.getLocation().getPostalCode().substring(0, 5))? 1: -10);
 		}
-		
-		return 0;
+		catch(Exception e)	//null and string index exceptions
+		{
+			return 0;			
+		}
 	}
 	
 	private int compareName(Business b)
@@ -109,5 +110,37 @@ public class YelpMatcher
 		}
 		
 		return 0;
+	}
+	
+	private int compareGeolocation(Business b)
+	{
+		int metersDistance = -1;
+		if(v.getLocation() != null
+				&& b.getLocation() != null
+				&& b.getLocation().getCoordinate() != null)
+		{
+			GeoDistance.metersBetween(
+					v.getLocation().getLat(), 
+					v.getLocation().getLng(), 
+					b.getLocation().getCoordinate().getLatitude(), 
+					b.getLocation().getCoordinate().getLongitude());
+		}
+			
+		if(metersDistance <15)
+		{
+			return 10;
+		}
+		else if(metersDistance <40)
+		{
+			return 3;
+		}
+		else if(metersDistance >100)
+		{
+			return -5;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 }

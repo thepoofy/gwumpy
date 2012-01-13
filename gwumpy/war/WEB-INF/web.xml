@@ -26,7 +26,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>YelpSearch</servlet-name>
-    <servlet-class>com.thepoofy.gwumpy.servlet.GwumpyDetails</servlet-class>
+    <servlet-class>com.thepoofy.gwumpy.servlet.YelpSearch</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>YelpSearch</servlet-name>

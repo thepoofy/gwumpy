@@ -1,5 +1,5 @@
 application: gwumpymobile
-version: 1
+version: beta
 runtime: java
 
 
@@ -14,9 +14,10 @@ handlers:
 - url: /gwumpy/qasearch
   name: QASearch
   servlet: com.thepoofy.gwumpy.servlet.GwumpyQASearch
+
 - url: /gwumpy/yelpsearch
   name: YelpSearch
-  servlet: com.thepoofy.gwumpy.servlet.GwumpyDetails
+  servlet: com.thepoofy.gwumpy.servlet.YelpSearch
 
 - url: /RestaurantGradeUpload
   name: RestaurantGradeUpload

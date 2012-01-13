@@ -26,8 +26,8 @@ public class RestaurantGradeUploaderUtil {
 	private static final String ADDRESS = "http://gwumpymobile.appspot.com/RestaurantGradeUpload";
 	private static int uploadCounter = 0;
 	
-	private static final int MINIMUM = 14000;
-	private static final int MAXIMUM = 17000;
+	private static final int MINIMUM = 17000;
+	private static final int MAXIMUM = 24000;
 	
 	/**
 	 * 
