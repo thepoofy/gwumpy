@@ -57,7 +57,7 @@
 		{
 			event.preventDefault();
 			
-			$("#searchTerm").val("");
+			$("#search_form_search_term").val("");
 			
 			callVenueSearch();
       });
@@ -65,7 +65,8 @@
 		$("#venueSearchForm").submit(function(event){
 			event.preventDefault();
 			
-			$("#searchTerm").val($("#venueSearchField").val());
+			$("#search_form_search_term").val($("#venueSearchField").val());
+			$("#search_form_standard").val("1");
 			
 			callVenueSearch();
 			
@@ -314,7 +315,7 @@
 				<div class="ui-block-a" align="left">
 					<!-- <a href="#homepage" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a>-->
 				</div>  
-				<h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+				<h2 class="ui-block-b" align="center">Gwumpy</h2>
 				<div class="ui-block-c" align="right">
 			        <!-- 
 			        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
@@ -335,7 +336,7 @@
 		<div data-role="header">
 	      	<div class="ui-grid-b" style="padding:4px;">
 		      	<div class="ui-block-a" align="left"><a href="#splash" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a></div>
-		        <h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+		        <h2 class="ui-block-b" align="center">Gwumpy</h2>
 		        <div class="ui-block-c" align="right">
 		        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
 		        		<label for="venueSearchField" class="ui-hidden-accessible">Search</label>
@@ -367,7 +368,7 @@
 	          </select>
 	          -->
 	          <label for="standard" class="select">How clean should my food be?</label>
-	          <select data-theme="d" name="standard">
+	          <select data-theme="d" name="standard" id="search_form_standard">
 	            <option value="3">Spotless</option>
 	            <option value="2">A little floor salt</option>
 	            <option value="1">Roaches are a delicacy</option>
@@ -376,7 +377,7 @@
 	          <input id="latitude" type="hidden" name="lat" value="" />
 	          <input id="longitude" type="hidden" name="lng" value="" />
 	          <input id="accuracy" type="hidden" name="llAcc" value="" />
-	          <input id="searchTerm" type="hidden" name="searchTerm" value="" />
+	          <input id="search_form_search_term" type="hidden" name="searchTerm" value="" />
 	          <br/>
 	          <button id="search" data-theme="g" disabled="disabled">Feed the Gwump!</button>
 	    	</form>
@@ -416,7 +417,7 @@
     	<div data-role="header">
 	      	<div class="ui-grid-b" style="padding:4px;">
 		      	<div class="ui-block-a" align="left"><a href="#homepage" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a></div>
-		        <h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+		        <h2 class="ui-block-b" align="center">Gwumpy</h2>
 		        <!-- 
 		        <div class="ui-block-c" align="right">
 		        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
