@@ -61,11 +61,14 @@ public class VenueSummary
 			vs.setDistance(v.getLocation().getDistance());
 		}
 		
-		Category cat = v.getCategories().get(0);
-		ImageDefinition imgDef = cat.getIcon();
-		String img = imgDef.getPrefix()+imgDef.getSizes().get(2)+imgDef.getName();
-		vs.setCategory(cat.getShortName());
-		vs.setCategoryImgUrl(img);
+		if(v.getCategories() != null && !v.getCategories().isEmpty())
+		{
+			Category cat = v.getCategories().get(0);
+			ImageDefinition imgDef = cat.getIcon();
+			String img = imgDef.getPrefix()+imgDef.getSizes().get(2)+imgDef.getName();
+			vs.setCategory(cat.getShortName());
+			vs.setCategoryImgUrl(img);
+		}
 		
 		vs.setHereNowCount(v.getHereNow().getCount());
 		
@@ -291,7 +294,7 @@ public class VenueSummary
 				
 				if("Z".equalsIgnoreCase(grade.getCurrentGrade()))
 				{
-					vs.setHealthCodeRating("Pending");
+					vs.setHealthCodeRating("-");
 				}
 				else
 				{
@@ -303,6 +306,8 @@ public class VenueSummary
 			catch(DatastoreObjectNotFoundException e)
 			{
 				//ignore this
+//				vs.setHealthCodeRating("A");
+//				vs.setHealthCodeViolations(11);
 			}
 			
 			venues.add(vs);

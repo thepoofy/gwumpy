@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/gwt-user.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/gwt-dev.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA.jar" sourcepath="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201112160242-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -22,5 +12,17 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/gwt-user.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/gwt-dev.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
+	<classpathentry kind="lib" path="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA.jar" sourcepath="G:/eclipse-jee-indigo-win32/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201201120043-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

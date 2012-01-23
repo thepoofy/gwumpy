@@ -5,12 +5,30 @@
 .alignRight{
 	text-align:right;
 }
+
+.ratingBox{
+	float:right;
+	margin-left:10px;
+	padding-right:10px;
+	width:40px;
+}
 .healthCode{
-	font-size:1.2em;
+	font-size:3.0em;
 }
 .violations{
- 	font-size:1.1em;
-}	
+ 	font-size:1.5em;
+}
+
+.healthCode-a{
+ 	color:blue;
+}
+.healthCode-b{
+ 	color:green;
+}
+.healthCode-c{
+ 	color:orange;
+}
+
 h3{
 	padding:0px;
 }

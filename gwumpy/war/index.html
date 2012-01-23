@@ -57,55 +57,85 @@
 		{
 			event.preventDefault();
 			
-			var form_data = $('form#search_form').serialize();
-	        $.ajax({
-	         url: "/gwumpy/search",
-	         data: form_data,
-	         dataType: 'json',
-	         beforeSend: function()
-	         {
-	        	 $.mobile.loadingMessage = "soo hungwy...";
-	        	 $.mobile.showPageLoadingMsg();
-	         },
-	         complete: function()
-	         {
-	        	 $.mobile.hidePageLoadingMsg();
-	         },
-	         success: function(data) 
-	         {
-	        	$("#results_list").empty();
-	        	
-				if(data.status === 200 && data.data !== null && data.data.length > 0)
-				{
-					$.each(data.data, function(i, venue) 
-					{
-						$(createListItem(venue)).appendTo("#results_list");
-					});
-	        	}
-	        	else
-	         	{
-	        		var list_data = '<li><h3>No data found.</h3></li>';
-	        		$(list_data).appendTo("#results_list");
-	         	}
-				
-				$.mobile.changePage('#results', {
-					transition: 'slide'
-				});
-				
-				$('#results_list').listview('refresh');
-	         }
-	        });
+			$("#searchTerm").val("");
+			
+			callVenueSearch();
       });
+		
+		$("#venueSearchForm").submit(function(event){
+			event.preventDefault();
+			
+			$("#searchTerm").val($("#venueSearchField").val());
+			
+			callVenueSearch();
+			
+			$.mobile.changePage('#results', {
+				transition: 'slide'
+			});
+			
+			return false;
+		});
     });
     $('#homepage').bind('pageshow', function(){
 		initiate_geolocation();
 	});
     
-    $('#details').live('pagecreate', function(event) {
-    	
+    $('#results').live('pagecreate', function(event) {
+    	$("#venueSearchForm").submit(function(event){
+			event.preventDefault();
+			
+			$("#searchTerm").val($("#venueSearchField").val());
+			
+			callVenueSearch();
+			
+			return false;
+		});
     });
     
-
+    
+    
+    function callVenueSearch()
+    {
+    	var form_data = $('form#search_form').serialize();
+        $.ajax({
+         url: "/gwumpy/search",
+         data: form_data,
+         dataType: 'json',
+         beforeSend: function()
+         {
+        	 $.mobile.loadingMessage = "soo hungwy...";
+        	 $.mobile.showPageLoadingMsg();
+         },
+         complete: function()
+         {
+        	 $.mobile.hidePageLoadingMsg();
+         },
+         success: function(data) 
+         {
+        	$("#results_list").empty();
+        	
+			if(data.status === 200 && data.data !== null && data.data.length > 0)
+			{
+				$.each(data.data, function(i, venue) 
+				{
+					$(createListItem(venue)).appendTo("#results_list");
+				});
+        	}
+        	else
+         	{
+        		var list_data = '<li><h3>No data found.</h3></li>';
+        		$(list_data).appendTo("#results_list");
+         	}
+			
+			$.mobile.changePage('#results', {
+				transition: 'slide'
+			});
+			
+			$('#results_list').listview('refresh');
+         }
+        });
+    }
+	
     
     function handle_geolocation_query(position) 
     {
@@ -166,15 +196,30 @@
     	
     	if(venue.healthCodeRating)
     	{
-    		//var rightCol = create('div').addClass('healthCode'); 
-    		leftCol.append(create('p')
-                .text('Health Code Rating: ')
-                .append(create('strong').addClass('healthCode').text(venue.healthCodeRating)));	
-    		leftCol.append(create('p')
-                .text('Violations at last Inspection: ')
+    		var rightCol = create('div').addClass('ratingBox'); 
+    		rightCol.append(create('span')
+                //.text('Health Code Rating: ')
+                .append(create('strong')
+                		.addClass('healthCode')
+                		.addClass(function(){
+                			if('A' === venue.healthCodeRating)
+                			{
+                				return 'healthCode-a';
+                			}
+                			if('B' === venue.healthCodeRating)
+                			{
+                				return 'healthCode-b';
+                			}
+                			if('C' === venue.healthCodeRating)
+                			{
+                				return 'healthCode-c';
+                			}
+                		}).text(venue.healthCodeRating)));	
+    		rightCol.append(create('span')
+                //.text('Violations at last Inspection: ')
                 .append(create('strong').addClass('violations').text(venue.healthCodeViolations)));
     		
-    		//gridLayout.append(rightCol);
+    		li.append(rightCol);
     	}
     	
     	
@@ -195,70 +240,155 @@
     }
 
 
+    function initiate_geolocation() 
+    {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handle_geolocation_query, handle_errors, {timeout: 10000});
+      } else {
+        yqlgeo.get('visitor', normalize_yql_response);
+      }
+    }
+
+    function onGeoLocationEnabled()
+    {
+    	//alert("success");
+    	hasGeoLocation = true;
+    	
+    	$('#btnInit').attr('disabled', false);
+    	try
+    	{
+    		$('#btnInit').button('enable');
+    	}
+    	catch(e){}
+    	
+    	$('#search').attr('disabled', false);
+    	
+    	try
+    	{
+    		$('#search').button('enable');
+    	}
+    	catch(e){}
+    }
+
+    function handle_errors(error){}
+
+    function normalize_yql_response(response) {
+      if (response.error) {
+        var error = { code : 0 };
+        handle_error(error);
+        return;
+      }
+
+    	var position = {
+            coords : {
+              latitude: response.place.centroid.latitude,
+              longitude: response.place.centroid.longitude,
+              accuracy: response.place.centroid.accuracy
+            },
+            address : {
+              city: response.place.locality2.content,
+              region: response.place.admin1.content,
+              country: response.place.country.content
+            }
+    	};
+
+    	handle_geolocation_query(position);
+    }
+
+    function create(domType)
+    {
+    	return $(document.createElement(domType));
+    }
+
+    function createText(text)
+    {
+    	return $(document.createTextNode(text));
+    }
     
-    
-    </script>
+</script>
   </head>
   <body>
     <div id="splash" data-role="page">
-      <div data-role="header">
-        <h1>Gwumpy [beta]</h1>
-      </div>
+    	<div data-role="header">
+	    	<div class="ui-grid-b" style="padding:4px;">
+				<div class="ui-block-a" align="left">
+					<!-- <a href="#homepage" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a>-->
+				</div>  
+				<h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+				<div class="ui-block-c" align="right">
+			        <!-- 
+			        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
+			        		<label for="venueSearchField" class="ui-hidden-accessible">Search</label>
+			        		<input id="venueSearchField" type="search" data-inline="true" data-icon="search" placeholder="Search" />
+			        	</form>
+			         -->
+				</div>
+			</div>
+		</div>
       <div data-role="content">
-        <center><img src="assets/stylesheets/images/gwumpy.png"/></center>
+        <div align="center"><img src="assets/stylesheets/images/gwumpy.png"/></div>
         
         <button id="btnInit" data-theme="g" disabled="disabled">I'm hungry!</button>
       </div>
     </div>
-    <div id="homepage" data-role="page">
-      <div data-role="header">
-        <a href="#splash" data-rel="back" data-theme="a">Back</a>
-        <h1>Gwumpy [beta]</h1>
-      </div>
-      <div data-role="content">
-        <form name="search_form" id="search_form">
-          <label for="category" class="select">I'm Craving:</label>
-          <select id="craving" data-theme="d" name="category">
-            <option value="restaurants">ANYTHING!</option>
-            <option value="american">American</option>
-            <option value="french">French</option>
-            <option value="italian">Italian</option>
-            <option value="japanese">Japanese</option>
-            <option value="mexican">Mexican</option>
-            <option value="pizza">Pizza</option>
-            <option value="thai">Thai</option>
-          </select>
-          <!-- 
-          <label for="price" class="select">I'm Willing to Spend:</label>
-          <select data-theme="d" name="price">
-            <option value="4">As much as I need to</option>
-            <option value="3">A decent amount</option>
-            <option value="2">A little bit</option>
-            <option value="1">What I Found in My Pocket</option>
-          </select>
-          -->
-          <label for="standard" class="select">How clean should my food be?</label>
-          <select data-theme="d" name="standard">
-            <option value="3">Spotless</option>
-            <option value="2">A little floor salt</option>
-            <option value="1">Roaches are a delicacy</option>
-          </select>
-           
-          <input id="latitude" type="hidden" name="lat" value="" />                                                                    
-          <input id="longitude" type="hidden" name="lng" value="" />
-          <input id="accuracy" type="hidden" name="llAcc" value="" />
-          <br/>
-          <button id="search" data-theme="g" disabled="disabled">Feed the Gwump!</button>
-        </form>
-      </div>
-      <div data-role="footer">
-        <h3><img style="width:300px" src="/assets/stylesheets/images/poweredByFoursquare_white.png" alt="Powered By Foursquare"/></h3>
-      </div>
-    </div>
+	<div id="homepage" data-role="page">
+		<div data-role="header">
+	      	<div class="ui-grid-b" style="padding:4px;">
+		      	<div class="ui-block-a" align="left"><a href="#splash" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a></div>
+		        <h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+		        <div class="ui-block-c" align="right">
+		        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
+		        		<label for="venueSearchField" class="ui-hidden-accessible">Search</label>
+		        		<input id="venueSearchField" type="search" data-inline="true" data-icon="search" placeholder="Search" />
+		        	</form>
+		        </div>
+	      	</div>
+		</div>
+		<div data-role="content">
+	        <form name="search_form" id="search_form">
+	          <label for="category" class="select">I'm Craving:</label>
+	          <select id="craving" data-theme="d" name="category">
+	            <option value="restaurants">ANYTHING!</option>
+	            <option value="american">American</option>
+	            <option value="french">French</option>
+	            <option value="italian">Italian</option>
+	            <option value="japanese">Japanese</option>
+	            <option value="mexican">Mexican</option>
+	            <option value="pizza">Pizza</option>
+	            <option value="thai">Thai</option>
+	          </select>
+	          <!-- 
+	          <label for="price" class="select">I'm Willing to Spend:</label>
+	          <select data-theme="d" name="price">
+	            <option value="4">As much as I need to</option>
+	            <option value="3">A decent amount</option>
+	            <option value="2">A little bit</option>
+	            <option value="1">What I Found in My Pocket</option>
+	          </select>
+	          -->
+	          <label for="standard" class="select">How clean should my food be?</label>
+	          <select data-theme="d" name="standard">
+	            <option value="3">Spotless</option>
+	            <option value="2">A little floor salt</option>
+	            <option value="1">Roaches are a delicacy</option>
+	          </select>
+	           
+	          <input id="latitude" type="hidden" name="lat" value="" />
+	          <input id="longitude" type="hidden" name="lng" value="" />
+	          <input id="accuracy" type="hidden" name="llAcc" value="" />
+	          <input id="searchTerm" type="hidden" name="searchTerm" value="" />
+	          <br/>
+	          <button id="search" data-theme="g" disabled="disabled">Feed the Gwump!</button>
+	    	</form>
+		</div>
+		<div data-role="footer" data-position="fixed">
+			<h3><img style="width:300px" src="/assets/stylesheets/images/poweredByFoursquare_white.png" alt="Powered By Foursquare"/></h3>
+		</div>
+	</div>
     <div id="onError" data-role="page">
    	  
       <div data-role="header">
-      	<a href="#splash" data-rel="back" data-theme="a">Back</a>
+      	<a href="#splash" data-icon="back" data-rel="back" data-theme="a">Back</a>
       	<h1>Oops...</h1>
       </div>
       <div data-role="content">
@@ -267,7 +397,7 @@
     </div>
     <div id="onGeoDenied" data-role="page">
       <div data-role="header">
-      	<a href="#splash" data-rel="back" data-theme="a">Back</a>
+      	<a href="#splash" data-icon="back" data-rel="back" data-theme="a">Back</a>
       	<h1>Oops...</h1>
       </div>
       <div data-role="content">
@@ -283,14 +413,28 @@
       </form>
     </div>
     <div id="results" data-role="page">
-      <div data-role="header"><a href="#homepage" data-rel="back" data-theme="a">Back</a><h1>Search Results</h1></div>
+    	<div data-role="header">
+	      	<div class="ui-grid-b" style="padding:4px;">
+		      	<div class="ui-block-a" align="left"><a href="#homepage" data-icon="back" data-role="button" data-rel="back" data-theme="a">Back</a></div>
+		        <h2 class="ui-block-b" align="center">Gwumpy [beta]</h2>
+		        <!-- 
+		        <div class="ui-block-c" align="right">
+		        	<form id="venueSearchForm" name="venueSearch" action="" method="post">
+		        		<label for="venueSearchField" class="ui-hidden-accessible">Search</label>
+		        		<input id="venueSearchField" type="search" data-inline="true" data-icon="search" placeholder="Search" />
+		        	</form>
+		        </div>
+		         -->
+	      	</div>
+		</div>
+		
       <div data-role="content">
       	<ul id="results_list" data-role="listview"></ul>
       </div>
     </div>
     <div id="details" data-role="page">
       <div data-role="header">
-        <a href="#results" data-rel="back" data-theme="a">Back</a>
+        <a href="#results" data-icon="back" data-rel="back" data-theme="a">Back</a>
         <h1>Details</h1>
       </div>
       <div id="content" data-role="content">

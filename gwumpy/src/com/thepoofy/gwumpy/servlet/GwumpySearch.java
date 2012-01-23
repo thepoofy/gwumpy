@@ -35,6 +35,7 @@ public class GwumpySearch extends ServletBase
 			Double llAcc = getParameterDouble(request, "llAcc", false);//Integer.parseInt(request.getParameter("llAcc"));
 			String cat = getParameter(request, "category", false);
 			String standards = getParameter(request, "standard", false);
+			String searchTerm = getParameter(request, "searchTerm", false);
 			
 			Location loc = new Location();
 			loc.setLatitude(lat);
@@ -50,7 +51,16 @@ public class GwumpySearch extends ServletBase
 			//guarantees a category
 			VenueCategoryEnum category = VenueCategoryEnum.find(cat);
 			
-			VenueSearchResponse vsr = dao.browse(loc, radius, category.getFsqId());
+			VenueSearchResponse vsr;
+			if(searchTerm != null && !searchTerm.isEmpty())
+			{
+				vsr = dao.search(loc, radius, searchTerm, 100, null, null);//browse(loc, radius, category.getFsqId());
+			}
+			else
+			{
+				vsr = dao.browse(loc, radius, category.getFsqId());	
+			}
+			
 			
 			List<VenueSummary> venues = VenueSummary.adaptVenueList(vsr);
 			
@@ -78,31 +88,31 @@ public class GwumpySearch extends ServletBase
 	 */
 	private static List<VenueSummary> cleanupVenues(List<VenueSummary> venues, String standards)
 	{
-		log.info("Standards: "+standards);
+//		log.info("Standards: "+standards);
 		
 		List<VenueSummary> cleanVenues = new ArrayList<VenueSummary>();
 		
 		if("3".equalsIgnoreCase(standards) || "2".equalsIgnoreCase(standards))
 		{
-			log.info("User has Standards: "+standards);
+//			log.info("User has Standards: "+standards);
 				
 			for(VenueSummary vs : venues)
 			{
 				if(vs.getHealthCodeViolations() == null)
 				{
-					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+//					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
 					
 					cleanVenues.add(vs);
 				}
 				else if("3".equalsIgnoreCase(standards) && vs.getHealthCodeViolations() < 7 )
 				{
-					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+//					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
 					
 					cleanVenues.add(vs);
 				}
 				else if("2".equalsIgnoreCase(standards) && vs.getHealthCodeViolations() < 18)
 				{
-					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
+//					log.info("Adding ("+vs.getHealthCodeViolations()+"): "+vs.getName());
 					
 					cleanVenues.add(vs);
 				}
